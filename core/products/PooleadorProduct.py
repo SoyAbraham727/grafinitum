@@ -11,11 +11,11 @@ from abc import ABC, abstractmethod
 class PooleadorProduct(ABC):
     """Clase Abstracta de pooleador"""
     @abstractmethod
-    def extraer_informacion(self):
+    def extraer_informacion(self, equipo):
         """Metodo para extraer la informacion de la respuesta de lila"""
 
     @abstractmethod
-    def construir_informacion(self):
+    def construir_informacion(self, db, respuesta_lila, timestamp):
         """Metodo para construir la informacion de los pooles 
         totales, libres y ocupados"""
 

@@ -25,7 +25,7 @@ sys.path.append("/home/ngsop/lilaApp/core")
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
 class PooleadorMXProduct(PooleadorProduct):
-    """Clase concreta de pooleador"""
+    """Clase concreta de pooleador para Juniper MX"""
 
     def homologar_pooles(self, pooles, totales, ocupados):
          """Metodo para homologar la informacion de los pooles configurados"""
