@@ -59,13 +59,13 @@ class PooleadorMXProduct(PooleadorProduct):
             
         try:
             
-            totales = equipo["102"]["salidaComando"]
-            ocupados = equipo["103"]["salidaComando"]
-        
-            resultados = equipo["101"].get("resultadosValidacion", {})
-            pooles["ipv4"] = resultados.get("(NO_INTERNET|POOL_TELMEX)", {})
-            pooles["ipv6"] = resultados.get("IPV6", {})
-            pooles["cgnat"] = resultados.get("CGN", {})
+            validaciones = equipo["101"].get("resultadosValidacion", {})
+            totales = equipo["102"].get("salidaComando", {})
+            ocupados = equipo["103"].get("salidaComando", {})
+
+            pooles["ipv4"] = validaciones.get("(NO_INTERNET|POOL_TELMEX)", {})
+            pooles["ipv6"] = validaciones.get("IPV6", {})
+            pooles["cgnat"] = validaciones.get("CGN", {})
 
             self.homologar_pooles(pooles, totales, ocupados)
 
@@ -134,13 +134,13 @@ class PooleadorMXProduct(PooleadorProduct):
                         pool_name
                     )
                     
-                    # Generar el registro en la base de datos
+                    # Generar el registro
                     info_equipo = self.generar_registro_db(
                         timestamp, equipo, 
                         pooles[pool_name]
                     )
 
-                    # Gardar el registro en la base de datos
+                    # Guardar el registro en la base de datos
                     self.guardar_data(db, info_equipo, pool_name)
 
 
