@@ -109,35 +109,39 @@ class PooleadorMXProduct(PooleadorProduct):
         
         
     def construir_informacion(self, db, respuesta_lila, timestamp):
-        """Metodo para construir la informacion de los pooles totales, l
-        ibres y ocupados por equipo"""
+        """Método para construir la información de los pools totales, 
+        libres y ocupados por equipo."""
+        
+        # C000 - código de estado exitoso de Lila
+        if "C000" not in respuesta_lila["statusCode"]:
+            return  # Si no hay código exitoso, no hacemos nada.
 
-        #C000 - codigo de estado exitoso de lila
-        if "C000" in respuesta_lila["statusCode"]:
-            #Se obtienen los equipos no encontrados en inventario.
-            not_inventory_present \
-                = respuesta_lila["response"].pop("notInventoryPresent")
-            #Se obtienen los equipos fallidos.
-            failed_host = respuesta_lila["response"].pop("failed_hosts")
+        # Se obtienen los equipos no encontrados en inventario y los fallidos.
+        not_inventory_present = \
+            respuesta_lila["response"].pop("notInventoryPresent")
+        failed_hosts = respuesta_lila["response"].pop("failed_hosts")
 
-            for equipo in respuesta_lila["response"]:
-                pooles = self.extraer_informacion(equipo)
-                
-                for pool_name in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
-                    if pooles[pool_name]:
+        for equipo in respuesta_lila["response"]:
+            pooles = self.extraer_informacion(equipo)
+            
+            for pool_name in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
+                if pooles.get(pool_name):  # Usa .get() para evitar KeyError.
 
-                        self.calcular_pooles_totales(
-                            pooles, 
-                            ConstantesGrafinitum.IDENTIFICADOR_POOL[pool_name], 
-                            pool_name
-                            )
-                        
-                        info_equipo = self.generar_registro_db(
-                            timestamp, 
-                            equipo, 
-                            pooles[pool_name]
-                            )
-                        
-                        self.guardar_data(db, info_equipo, pool_name)
+                    # Calcular los pools totales
+                    self.calcular_pooles_totales(
+                        pooles,
+                        ConstantesGrafinitum.IDENTIFICADOR_POOL[pool_name],
+                        pool_name
+                    )
+                    
+                    # Generar el registro en la base de datos
+                    info_equipo = self.generar_registro_db(
+                        timestamp, equipo, 
+                        pooles[pool_name]
+                    )
+
+                    # Gardar el registro en la base de datos
+                    self.guardar_data(db, info_equipo, pool_name)
+
 
                                         
