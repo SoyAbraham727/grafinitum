@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 class PooleadorProduct(ABC):
     """Clase Abstracta de pooleador"""
     @abstractmethod
-    def extraer_informacion(self, equipo):
+    def extraer_informacion(self, respuesta_equipo):
         """Metodo para extraer la informacion de la respuesta de lila"""
 
     @abstractmethod
@@ -27,6 +27,6 @@ class PooleadorProduct(ABC):
 
         return respuesta_lila
     
-    def guardar_data(self, db, registro, coleccion):
+    def guardar_datos(self, db, registro, coleccion):
         """Metodo para guardar la informacion en la base de datos"""
         db.saveData(registro, coleccion)
