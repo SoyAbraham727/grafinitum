@@ -14,6 +14,7 @@ from constantesPlugins import LOG_CONFIG_FILES
 from UtilidadesPooles import *
 from ConstantesPooles import *
 from utilidadesPlugins import utilidadesPlugins
+from modelsPlugins import PluginMail
 from core.products.PooleadorProduct import PooleadorProduct
 from utilidades.UtilidadesGrafinitum import UtilidadesGrafinitum
 from constantes.ConstantesGrafinitum import ConstantesGrafinitum
@@ -32,21 +33,28 @@ class PooleadorLatestVersion(PooleadorProduct, ABC):
          """Metodo para homologar la informacion de los pooles configurados"""
 
 
-    def extraer_informacion(self, respuesta_equipo):
-        """Metodo para extraer la informacion de la respuesta de lila"""
-
-        pooles = { "ipv4": {}, "ipv6": {}, "cgnat": {}}
-            
-        validaciones = respuesta_equipo["101"].get("resultadosValidacion", {})
-        totales = respuesta_equipo["102"].get("salidaComando", {})
-        ocupados = respuesta_equipo["103"].get("salidaComando", {})
-
-        pooles["ipv4"] = validaciones.get("(NO_INTERNET|POOL_TELMEX)", {})
-        pooles["ipv6"] = validaciones.get("IPV6", {})
-        pooles["cgnat"] = validaciones.get("CGN", {})
-
+    def extraer_informacion(self, nombre_equipo, respuesta_equipo):
+        """Método para extraer la información de la respuesta de lila"""
         
-        self.homologar_pooles(pooles, totales, ocupados)
+        pooles = {"ipv4": {}, "ipv6": {}, "cgnat": {}}
+        
+        try:
+            validaciones = respuesta_equipo["101"].get("resultadosValidacion", {})
+            totales = respuesta_equipo["102"].get("salidaComando", {})
+            ocupados = respuesta_equipo["103"].get("salidaComando", {})
+
+            pooles["ipv4"] = validaciones.get("(NO_INTERNET|POOL_TELMEX)", {})
+            pooles["ipv6"] = validaciones.get("IPV6", {})
+            pooles["cgnat"] = validaciones.get("CGN", {})
+
+            self.homologar_pooles(pooles, totales, ocupados)
+
+        except KeyError as error_extraer_informcion:
+            logger.error(f"Error al extraer información en equipo: {nombre_equipo}: {error_extraer_informcion}")
+            titulo = f"GRAFINITUM: error_extraer_informacion en equipo: {nombre_equipo}"
+            UtilidadesGrafinitum.enviar_correo_notificacion(self, error_extraer_informcion,titulo)
+            
+            return pooles  # Retorna pooles vacíos en caso de error
 
         return pooles
     
@@ -55,21 +63,23 @@ class PooleadorLatestVersion(PooleadorProduct, ABC):
         """Funcion para calcular pooles totales por equipo"""
 
         totales = {"TOTALES": None, "OCUPADOS": None, "LIBRES": None}
-
-        for pool_nombre, pool_valores in pooles[nombre_pool].items():
-            if any(re.match(patron, pool_nombre) for patron in identificadores):
-                for key in ["TOTALES", "OCUPADOS", "LIBRES"]:
-                    valor_actual = pool_valores.get(key)
-
-                    if valor_actual is not None:
-                        if totales[key] is None:
-                            totales[key] = valor_actual
-                        else:
+        try:
+            for pool_nombre, pool_valores in pooles[nombre_pool].items():
+                if any(re.match(patron, pool_nombre) for patron in identificadores):
+                    for key in ["TOTALES", "OCUPADOS", "LIBRES"]:
+                        valor_actual = pool_valores.get(key)
+                        
+                        if valor_actual is not None and totales[key] is not None:
                             totales[key] += valor_actual
+                        elif valor_actual is not None and totales[key] is None:
+                            totales[key] = valor_actual
+                        
 
-        pooles[nombre_pool].update({
-            ConstantesGrafinitum.CLAVES_POOLES_TOTALES[nombre_pool]: totales
-        })
+            pooles[nombre_pool].update({
+                ConstantesGrafinitum.CLAVES_POOLES_TOTALES[nombre_pool]: totales
+            })
+        except Exception as e:
+            logger.error(f"Error al calcular pooles totales para {nombre_pool}: {e}")
 
         return dict(pooles)
 
@@ -82,31 +92,37 @@ class PooleadorLatestVersion(PooleadorProduct, ABC):
             return  None, None # Si no hay código exitoso, retornamos listas vacias
 
         # Se obtienen los equipos no encontrados en inventario y los fallidos.
-        not_inventory_present = \
-            respuesta_lila["response"].pop("notInventoryPresent",[])
+        not_inventory_present = respuesta_lila["response"].pop("notInventoryPresent",[])
         failed_hosts = respuesta_lila["response"].pop("failed_hosts",[])
 
         for equipo in respuesta_lila["response"]:
-            pooles = self.extraer_informacion(equipo)
+            logger.info(f"Inicia :: construir_informacion :: para el equipo: {equipo}")
+            try:
+                pooles = self.extraer_informacion(equipo.keys(), equipo.values())
+                
+                for pool_name in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
+                    if pooles.get(pool_name):
+
+                        # Calcular los pools totales
+                        self.calcular_pooles_totales(
+                            pooles,
+                            ConstantesGrafinitum.IDENTIFICADOR_POOL[pool_name],
+                            pool_name
+                        )
+                        
+                        # Generar el registro
+                        info_equipo = self.generar_registro_db(
+                            timestamp, equipo,
+                            pooles[pool_name]
+                        )
+
+                        # Guardar el registro en la base de datos
+                        self.guardar_datos(db, info_equipo, pool_name)
+            except Exception as error_construir_informcion:
+                logger.error(f"Error al construir informacion del equipo {equipo.keys()}: {error_construir_informcion}")
+                titulo = f"GRAFINITUM: error_construir_informacion de equipo: {equipo.keys()}"
+                UtilidadesGrafinitum.enviar_correo_notificacion(self, error_construir_informcion,titulo)
             
-            for pool_name in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
-                if pooles.get(pool_name):  # Usa .get() para evitar KeyError.
-
-                    # Calcular los pools totales
-                    self.calcular_pooles_totales(
-                        pooles,
-                        ConstantesGrafinitum.IDENTIFICADOR_POOL[pool_name],
-                        pool_name
-                    )
-                    
-                    # Generar el registro
-                    info_equipo = self.generar_registro_db(
-                        timestamp, equipo,
-                        pooles[pool_name]
-                    )
-
-                    # Guardar el registro en la base de datos
-                    self.guardar_datos(db, info_equipo, pool_name)
         return failed_hosts, not_inventory_present
 
                                         

@@ -52,8 +52,6 @@ class Pooleador10000Product(PooleadorProduct):
             return  # Si no hay código exitoso, no hacemos nada.
         
         try:
-            
-
             # Se obtienen los equipos no encontrados en inventario y los fallidos.
             not_inventory_present = \
                 respuesta_lila["response"].pop("notInventoryPresent")

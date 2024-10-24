@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 class PooleadorProduct(ABC):
     """Clase Abstracta de pooleador"""
     @abstractmethod
-    def extraer_informacion(self, respuesta_equipo):
+    def extraer_informacion(self, nombre_equipo, respuesta_equipo):
         """Metodo para extraer la informacion de la respuesta de lila"""
 
     @abstractmethod

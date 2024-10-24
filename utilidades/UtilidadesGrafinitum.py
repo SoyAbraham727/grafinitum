@@ -6,28 +6,28 @@ __email__ = 'gmoralea@uninet.com.mx, jbarranc@uninet.com.mx'
 __status__ = 'Desarrolllo'
 
 import sys
-import dominate
-from dominate.tags import *
 import html
-from datetime import datetime
-
-# Añadir rutas al sistema
-sys.path.append("/home/ngsop/lilaApp/plugins/utilidadesPlugins")
-sys.path.append("/home/ngsop/lilaApp/core")
-
+import dominate
 # Importar módulos personalizados
 from ConstantesPooles import *
 from loggingConfig import LoggerFileConfig
 from constantesPlugins import LOG_CONFIG_FILES
 from modelsPlugins import PluginMail
 from utilidadesPlugins import utilidadesPlugins
+from dominate.tags import *
+from datetime import datetime
+
+# Añadir rutas al sistema
+sys.path.append("/home/ngsop/lilaApp/plugins/utilidadesPlugins")
+sys.path.append("/home/ngsop/lilaApp/core")
 
 # Configuración del logger
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
 class UtilidadesGrafinitum:
+    """Utilidades para Grafinitum"""
 
-    def genHTMLAlert(self, mensaje):
+    def gen_html_alert(self, exception):
         """Genera una alerta en formato HTML."""
         logger.info("inicio::genHTMLAlert:GRAFINITUM")
         try:
@@ -52,7 +52,7 @@ class UtilidadesGrafinitum:
                         th("Hora de ejecución")
                     with tr():
                         td("Revisión ejecutada")
-                        td(str(mensaje))
+                        td(str(exception))
                         td(format)
                 br()
                 with div():
@@ -61,11 +61,11 @@ class UtilidadesGrafinitum:
             logger.info("fin::genHTMLAlert:GRAFINITUM")
             return doc.render()
 
-        except Exception as errorGenHTMLAlert:
-            logger.error(f"errorGenHTMLAlert: {errorGenHTMLAlert}")
+        except Exception as error_gen_html_alert:
+            logger.error(f"errorGenHTMLAlert: {error_gen_html_alert}")
             return ""
 
-    def enviarCorreoNotificacion(self, mensaje):
+    def enviar_correo_notificacion(self, exception, titulo):
         """Envía una notificación por correo con el mensaje especificado."""
         
         try:
@@ -77,8 +77,8 @@ class UtilidadesGrafinitum:
                     'jbarranc@uninet.com.mx', 
                     'gmoralea@uninet.com.mx'
                     ],
-                html=self.genHTMLAlert(mensaje),
-                title="GRAFINITUM: Notificación"
+                html=self.gen_html_alert(exception),
+                title= titulo
             )
 
             # Enviar el correo
