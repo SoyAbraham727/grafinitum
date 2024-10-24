@@ -73,25 +73,18 @@ class PooleadorLatestVersion(PooleadorProduct, ABC):
 
         return dict(pooles)
 
-
-    def generar_registro_db(self, timestamp, equipo, info_pooles):
-        """Metodo para generar el registro completo por equipo"""
-
-        return { "timestamp":timestamp, "device":equipo, "data":info_pooles }
-        
-        
     def construir_informacion(self, db, respuesta_lila, timestamp):
         """Método para construir la información de los pools totales, 
         libres y ocupados por equipo."""
         
         # C000 - código de estado exitoso de Lila
         if "C000" not in respuesta_lila["statusCode"]:
-            return  # Si no hay código exitoso, no hacemos nada.
+            return  None, None # Si no hay código exitoso, retornamos listas vacias
 
         # Se obtienen los equipos no encontrados en inventario y los fallidos.
         not_inventory_present = \
-            respuesta_lila["response"].pop("notInventoryPresent")
-        failed_hosts = respuesta_lila["response"].pop("failed_hosts")
+            respuesta_lila["response"].pop("notInventoryPresent",[])
+        failed_hosts = respuesta_lila["response"].pop("failed_hosts",[])
 
         for equipo in respuesta_lila["response"]:
             pooles = self.extraer_informacion(equipo)
@@ -108,7 +101,7 @@ class PooleadorLatestVersion(PooleadorProduct, ABC):
                     
                     # Generar el registro
                     info_equipo = self.generar_registro_db(
-                        timestamp, equipo, 
+                        timestamp, equipo,
                         pooles[pool_name]
                     )
 

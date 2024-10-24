@@ -29,15 +29,15 @@ class PooleadorASRProduct(PooleadorLatestVersion):
     """Clase concreta de pooleador para Cisco ASR9K"""
 
     def homologar_pooles(self, pooles,info_pool1, info_pool2):
-         """Metodo para homologar la informacion de los pooles configurados
-            :pooles: Son los pooles configurados en un equipo
-            :info_pool1: Se refiere a la cantidad de pooles totales
-            :info_pool2: Se refiere a la cantidad de pooles ocupados
-         """
-         
-         pooles_homologados = {}
+        """Metodo para homologar la informacion de los pooles configurados
+        :pooles: Son los pooles configurados en un equipo
+        :info_pool1: Se refiere a la cantidad de pooles ocupados
+        :info_pool2: Se refiere a la cantidad de pooles libres
+        """
+        
+        pooles_homologados = {}
 
-         for pool in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
+        for pool in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
             if pooles.get(pool):
                 for oid, nombre_pool in pooles[pool].items():
                     pooles_ocupados = info_pool1.get(oid,None)

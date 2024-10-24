@@ -24,3 +24,6 @@ class ConstantesGrafinitum:
         "ipv6": ["LAN_IPV6_TELMEX", "POOL_IPV6_TELMEX"],
         "cgnat": ["CGN_TELMEX", "POOL_CGN"]
     }
+
+    #Identificador de pool NO_INTERNET
+    NO_INTERNET = "78.79.95.73.78.84.69.82.78.69.84.1.4.169.254.0.0"

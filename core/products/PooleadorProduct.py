@@ -30,3 +30,8 @@ class PooleadorProduct(ABC):
     def guardar_datos(self, db, registro, coleccion):
         """Metodo para guardar la informacion en la base de datos"""
         db.saveData(registro, coleccion)
+
+    def generar_registro_db(self, timestamp, equipo, info_pooles):
+        """Metodo para generar el registro completo por equipo"""
+
+        return { "timestamp":timestamp, "device":equipo, "data":info_pooles }
