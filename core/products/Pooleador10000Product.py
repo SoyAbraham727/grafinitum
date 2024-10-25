@@ -31,17 +31,15 @@ class Pooleador10000Product(PooleadorLegacy):
     def construir_informacion(self, db, respuesta_lila, timestamp):
         """Metodo para construir el diccionario de IPV4 de cada equipo
         legacy cisco.
-        :param data: respuesta de ejecucion de plugin.
+        :param db: Instancia de conexion a la base de datos.
+        :respuesta_lila: Es la respuesta de lila al ejecutar un plugin
+        :timestamp: Valor numerico para representar la hora de ejecucion
         :return failed_hosts, not_inventory_present: Donde failed_host se refiere a los equipos que no puedieron ser ejecutados
         y not_inventory_present a los equipos que no se encontraron en el inventario"""
 
-        pool_ipv4 = {
-            'ipv4': {
-                'IPV4_TOTAL':{
-                    'TOTALES': None,
-                    'OCUPADOS': None, 
-                    'LIBRES': None
-                    }}}
+        pool_ipv4_inicial = {'ipv4': {'IPV4_TOTAL':{'TOTALES': 0,'OCUPADOS': 0, 'LIBRES': 0}}}
+        pool_ipv4_none = {'ipv4': {'IPV4_TOTAL':{'TOTALES': None,'OCUPADOS': None, 'LIBRES': None}}}
+        pool_ipv4 = pool_ipv4_inicial.copy()
         
         if "C000" not in respuesta_lila["statusCode"]:
             return  None, None# Si no hay código exitoso, retornamos listas vacias.
@@ -59,9 +57,9 @@ class Pooleador10000Product(PooleadorLegacy):
 
                     if salida_comando:
                         suma_pooles_ipv4 = sum(num_pooles for elemento in salida_comando
-                                if not any(val == ConstantesGrafinitum.NO_INTERNET for val in elemento.values())
-                                for num_pooles in elemento.values() if isinstance(num_pooles, int))
-                        
+                                               if not any(val == ConstantesGrafinitum.NO_INTERNET for val in elemento.values())
+                                               for num_pooles in elemento.values() if isinstance(num_pooles, int))
+                                
                         if id_comando == '101':
                             pool_ipv4['ipv4']['IPV4_TOTAL']['LIBRES'] = suma_pooles_ipv4
                         elif id_comando == '102':
@@ -70,13 +68,7 @@ class Pooleador10000Product(PooleadorLegacy):
                         pool_ipv4['ipv4']['IPV4_TOTAL']['TOTALES'] += suma_pooles_ipv4
 
                     else:
-                        pool_ipv4 = {
-                            'ipv4': {
-                                'IPV4_TOTAL':{
-                                    'TOTALES': None,
-                                    'OCUPADOS': None, 
-                                    'LIBRES': None
-                                    }}}
+                        pool_ipv4 = pool_ipv4_none.copy()
                         break
 
                 # Generar el registro
@@ -84,6 +76,8 @@ class Pooleador10000Product(PooleadorLegacy):
 
                 # Guardar el registro en la base de datos
                 db.saveData(registro, 'ipv4') #Se elimina la llamada a los metodos
+
+                pool_ipv4 = pool_ipv4_inicial.copy()
 
 
             except Exception as error_construir_informcion:

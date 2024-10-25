@@ -34,8 +34,6 @@ class PooleadorASRProduct(PooleadorNextGeneration):
         :info_pool2: Se refiere a la cantidad de pooles libres
         """
         
-        pooles_homologados = {}
-
         for pool in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
             if pooles.get(pool):
                 for oid, nombre_pool in pooles[pool].items():
@@ -48,9 +46,8 @@ class PooleadorASRProduct(PooleadorNextGeneration):
                     else:
                         pooles_ocupados = pooles_totales = pooles_libres = None
 
-                    pooles_homologados[nombre_pool] = {
+                    pooles[pool][nombre_pool] = {#Se actualiza directamente el diccionario
                         "TOTALES": pooles_totales,
                         "OCUPADOS": pooles_ocupados,
                         "LIBRES": pooles_libres
                     }
-                pooles[pool].update(pooles_homologados)

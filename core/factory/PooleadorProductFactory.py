@@ -13,7 +13,7 @@ from core.products.Pooleador10000Product import Pooleador10000Product
 from core.products.PooleadorE320Product import PooleadorE320Product
 
 class PooleadorProductFactory(PooleadorFactory):
-    """Clase Concreta para crear pooleador"""
+    """Clase Concreta para crear pooleadorProduct"""
     
     def crear_pooleador(self, nombre_pooleador):
         """Metodo para crear un pooleador concreto"""

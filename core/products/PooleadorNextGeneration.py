@@ -34,7 +34,10 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
 
 
     def extraer_informacion(self, nombre_equipo, info_equipo):
-        """Método para extraer la información de la respuesta de lila"""
+        """Método para extraer la información de la respuesta de lila para un equipo
+        :nombre_equipo: Es el nombre del equipo
+        :info_equipo: Es la salida de los comandos ejecutados en un equipo.
+        """
         
         pooles = {"ipv4": {}, "ipv6": {}, "cgnat": {}}
         
@@ -84,9 +87,13 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
         return dict(pooles)
 
     def construir_informacion(self, db, respuesta_lila, timestamp):
-        """Método para construir la información de los pools totales, 
-        libres y ocupados por equipo."""
-        
+        """Método para construir la información de los pooles (ipv4,ipv6,cgnat) totales, 
+        libres y ocupados por equipo.
+        :param db: Instancia de conexion a la base de datos.
+        :respuesta_lila: Es la respuesta de lila al ejecutar un plugin
+        :timestamp: Valor numerico para representar la hora de ejecucion
+        :return failed_hosts, not_inventory_present: Donde failed_host se refiere a los equipos que no puedieron ser ejecutados
+        y not_inventory_present a los equipos que no se encontraron en el inventario"""
         # C000 - código de estado exitoso de Lila
         if "C000" not in respuesta_lila["statusCode"]:
             return  None, None # Si no hay código exitoso, retornamos listas vacias

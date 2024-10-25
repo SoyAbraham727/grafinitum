@@ -26,17 +26,18 @@ sys.path.append("/home/ngsop/lilaApp/core")
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
 class PooleadorLegacy(PooleadorProduct, ABC):
-    """Clase que implementa PooleadorProduct para equipos legacy"""
+    """Clase Abstracta que implementa el método extraer_informacion de la interfazPooleadorProduct
+    para equipos legacy"""
 
-    def extraer_informacion(self, nombre_equipo, respuesta_equipo):
+    def extraer_informacion(self, nombre_equipo, info_equipo):
         """Metodo utilizado para extraer la informacion de los pooles
         configurados en un equipo
-        :respuesta_equipo: Se refiere a la respuesta de lila para un equipo
+        :info_equipo: Se refiere a la info de lila para un equipo
         """
         salida_comando = {}
         try:
-            comando = respuesta_equipo.get('comando',"")
-            salida_comando = respuesta_equipo['salidaComando'].get(comando, {})
+            comando = info_equipo.get('comando',"")
+            salida_comando = info_equipo['salidaComando'].get(comando, {})
         except KeyError as error_extraer_informcion:
             logger.error(f"Error al extraer información en equipo: {nombre_equipo}: {error_extraer_informcion}")
             titulo = f"GRAFINITUM: error_extraer_informacion en equipo: {nombre_equipo}"

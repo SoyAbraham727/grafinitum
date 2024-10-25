@@ -11,11 +11,18 @@ from abc import ABC, abstractmethod
 class PooleadorProduct(ABC):
     """Interfaz de PooleadorProduct"""
     @abstractmethod
-    def extraer_informacion(self, nombre_equipo, respuesta_equipo):
-        """Metodo para extraer la informacion de la respuesta de lila"""
+    def extraer_informacion(self, nombre_equipo, info_equipo):
+        """Método para extraer la información de la respuesta de lila para un equipo
+        :nombre_equipo: Es el nombre del equipo
+        :info_equipo: Es la salida de los comandos ejecutados en un equipo.
+        """
 
     @abstractmethod
     def construir_informacion(self, db, respuesta_lila, timestamp):
-        """Metodo para construir la informacion de los pooles 
-        totales, libres y ocupados"""
-
+        """Método para construir la información de los pooles (ipv4,ipv6,cgnat) totales, 
+        libres y ocupados por equipo.
+        :param db: Instancia de conexion a la base de datos.
+        :respuesta_lila: Es la respuesta de lila al ejecutar un plugin
+        :timestamp: Valor numerico para representar la hora de ejecucion
+        :return failed_hosts, not_inventory_present: Donde failed_host se refiere a los equipos que no puedieron ser ejecutados
+        y not_inventory_present a los equipos que no se encontraron en el inventario"""
