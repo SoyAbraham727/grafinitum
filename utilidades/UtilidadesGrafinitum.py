@@ -36,11 +36,11 @@ class UtilidadesGrafinitum:
 
             # Leer el archivo CSS
             with open("/home/ngsop/lilaApp/plugins/scripts/monTelcel/style.css") as cssFile:
-                cssInfo = cssFile.read()
+                css_info = cssFile.read()
 
             # Construir el documento HTML
             with doc.head:
-                style(cssInfo)
+                style(css_info)
             with doc:
                 h1("GRAFINITUM: Detección de Excepciones " + html.unescape("&#9888;"),
                    align="center", style="color:red;")
@@ -85,3 +85,20 @@ class UtilidadesGrafinitum:
             utilidadesPlugins().sendEmailLilaNasBrain(pluginMail)
         except Exception as e:
             logger.error(f"Error al enviar correo: {e}")
+
+    def ejecutar_plugin(self, plugin_execute):
+        """Metodo para ejecutar plugin y devolver la respuesta en formato 
+        json"""
+        respuesta_lila = utilidadesPlugins().sendPostLiLaExecutor(plugin_execute)
+        respuesta_lila = respuesta_lila.json()
+
+        return respuesta_lila
+    
+    def guardar_datos(self, db, registro, coleccion):
+        """Metodo para guardar la informacion en la base de datos"""
+        db.saveData(registro, coleccion)
+
+    def generar_registro_db(self, timestamp, equipo, info_pooles):
+        """Metodo para generar el registro completo por equipo"""
+
+        return { "timestamp":timestamp, "device":equipo, "data":info_pooles }

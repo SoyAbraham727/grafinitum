@@ -14,7 +14,7 @@ from constantesPlugins import LOG_CONFIG_FILES
 from UtilidadesPooles import *
 from ConstantesPooles import *
 from utilidadesPlugins import utilidadesPlugins
-from core.products.PooleadorProduct import PooleadorProduct
+from core.products.PooleadorLegacy import PooleadorLegacy
 from utilidades.UtilidadesGrafinitum import UtilidadesGrafinitum
 from constantes.ConstantesGrafinitum import ConstantesGrafinitum
 
@@ -25,20 +25,15 @@ sys.path.append("/home/ngsop/lilaApp/core")
 
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
-class Pooleador10000Product(PooleadorProduct):
+class Pooleador10000Product(PooleadorLegacy):
     """Clase que implementa PooleadorProduct para equipos legacy 10000"""
 
-    def extraer_informacion(self, respuesta_equipo):
-        comando = respuesta_equipo['comando']
-        salida_comando = respuesta_equipo['salidaComando'][comando]
-
-        return salida_comando
-    
     def construir_informacion(self, db, respuesta_lila, timestamp):
         """Metodo para construir el diccionario de IPV4 de cada equipo
         legacy cisco.
         :param data: respuesta de ejecucion de plugin.
-        :return poo_ipv4: Diccionario con información acerca de los poole."""
+        :return failed_hosts, not_inventory_present: Donde failed_host se refiere a los equipos que no puedieron ser ejecutados
+        y not_inventory_present a los equipos que no se encontraron en el inventario"""
 
         pool_ipv4 = {
             'ipv4': {
@@ -49,17 +44,18 @@ class Pooleador10000Product(PooleadorProduct):
                     }}}
         
         if "C000" not in respuesta_lila["statusCode"]:
-            return  # Si no hay código exitoso, no hacemos nada.
+            return  None, None# Si no hay código exitoso, retornamos listas vacias.
         
-        try:
+        
             # Se obtienen los equipos no encontrados en inventario y los fallidos.
-            not_inventory_present = \
-                respuesta_lila["response"].pop("notInventoryPresent")
-            failed_hosts = respuesta_lila["response"].pop("failed_hosts")
+        not_inventory_present = \
+            respuesta_lila["response"].pop("notInventoryPresent")
+        failed_hosts = respuesta_lila["response"].pop("failed_hosts")
 
-            for equipo in respuesta_lila["response"]:
-                for id_comando, info_comando in equipo.items():
-                    salida_comando = self.extraer_informacion(info_comando)
+        for nombre_equipo, info_equipo in respuesta_lila["response"].items():
+            try:
+                for id_comando, info_comando in info_equipo.items():
+                    salida_comando = self.extraer_informacion(nombre_equipo, info_comando)
 
                     if salida_comando:
                         suma_pooles_ipv4 = sum(num_pooles for elemento in salida_comando
@@ -83,24 +79,16 @@ class Pooleador10000Product(PooleadorProduct):
                                     }}}
                         break
 
-
                 # Generar el registro
-                info_equipo = self.generar_registro_db(
-                    timestamp, equipo,
-                    pool_ipv4
-                )
+                registro = { "timestamp":timestamp, "device":nombre_equipo, "data":pool_ipv4} #Se elimina la llamada a los metodos, se realiza en código
 
                 # Guardar el registro en la base de datos
-                self.guardar_datos(db, info_equipo, 'ipv4')
+                db.saveData(registro, 'ipv4') #Se elimina la llamada a los metodos
 
 
-        except Exception as error_construir_informcion:
-            logger.error(f"error_construir_informcion: {error_construir_informcion}")
-            pluginMail = PluginMail(to=['jcirilo@uninet.com.mx'],
-                        cc=['jcirilo@uninet.com.mx','gmoralea@uninet.com.mx, jbarranc@uninet.com.mx'],
-                        html= genHTMLAlert(error_construir_informcion),
-                        title="GRAFINITUM: error_construir_informcion",
-                                )
-            utilidadesPlugins().sendEmailLilaNasBrain(pluginMail)
+            except Exception as error_construir_informcion:
+                logger.error(f"Error al construir informacion del equipo {nombre_equipo}: {error_construir_informcion}")
+                titulo = f"GRAFINITUM: error_construir_informacion de equipo: {nombre_equipo}"
+                UtilidadesGrafinitum.enviar_correo_notificacion(self, error_construir_informcion,titulo)
 
         return failed_hosts, not_inventory_present

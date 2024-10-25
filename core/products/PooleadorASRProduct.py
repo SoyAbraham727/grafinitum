@@ -14,8 +14,7 @@ from constantesPlugins import LOG_CONFIG_FILES
 from UtilidadesPooles import *
 from ConstantesPooles import *
 from utilidadesPlugins import utilidadesPlugins
-from core.products.PooleadorProduct import PooleadorProduct
-from core.products.PooleadorLatestVersion import PooleadorLatestVersion
+from core.products.PooleadorNextGeneration import PooleadorNextGeneration
 from utilidades.UtilidadesGrafinitum import UtilidadesGrafinitum
 from constantes.ConstantesGrafinitum import ConstantesGrafinitum
 
@@ -25,7 +24,7 @@ sys.path.append("/home/ngsop/lilaApp/core")
 
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
-class PooleadorASRProduct(PooleadorLatestVersion):
+class PooleadorASRProduct(PooleadorNextGeneration):
     """Clase concreta de pooleador para Cisco ASR9K"""
 
     def homologar_pooles(self, pooles,info_pool1, info_pool2):

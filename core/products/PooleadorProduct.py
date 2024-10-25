@@ -9,7 +9,7 @@ from utilidadesPlugins import utilidadesPlugins
 from abc import ABC, abstractmethod
 
 class PooleadorProduct(ABC):
-    """Clase Abstracta de pooleador"""
+    """Interfaz de PooleadorProduct"""
     @abstractmethod
     def extraer_informacion(self, nombre_equipo, respuesta_equipo):
         """Metodo para extraer la informacion de la respuesta de lila"""
@@ -19,19 +19,3 @@ class PooleadorProduct(ABC):
         """Metodo para construir la informacion de los pooles 
         totales, libres y ocupados"""
 
-    def ejecutar_plugin(self, plugin_execute):
-        """Metodo para ejecutar plugin y devolver la respuesta en formato 
-        json"""
-        respuesta_lila = utilidadesPlugins().sendPostLiLaExecutor(plugin_execute)
-        respuesta_lila = respuesta_lila.json()
-
-        return respuesta_lila
-    
-    def guardar_datos(self, db, registro, coleccion):
-        """Metodo para guardar la informacion en la base de datos"""
-        db.saveData(registro, coleccion)
-
-    def generar_registro_db(self, timestamp, equipo, info_pooles):
-        """Metodo para generar el registro completo por equipo"""
-
-        return { "timestamp":timestamp, "device":equipo, "data":info_pooles }
