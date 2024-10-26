@@ -41,11 +41,7 @@ class PooleadorE320Product(PooleadorLegacy):
         pool_ipv4_none = {'ipv4': {'IPV4_TOTAL':{'TOTALES': None,'OCUPADOS': None, 'LIBRES': None}}}
         pool_ipv4 = pool_ipv4_inicial.copy()
         
-        if "C000" not in respuesta_lila["statusCode"]:
-            return  None, None# Si no hay código exitoso, retornamos listas vacias.
-        
-        
-            # Se obtienen los equipos no encontrados en inventario y los fallidos.
+        # Se obtienen los equipos no encontrados en inventario y los fallidos.
         not_inventory_present = \
             respuesta_lila["response"].pop("notInventoryPresent")
         failed_hosts = respuesta_lila["response"].pop("failed_hosts")

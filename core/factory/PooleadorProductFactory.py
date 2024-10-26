@@ -15,16 +15,16 @@ from core.products.PooleadorE320Product import PooleadorE320Product
 class PooleadorProductFactory(PooleadorFactory):
     """Clase Concreta para crear pooleadorProduct"""
     
-    def crear_pooleador(self, nombre_pooleador):
+    def crear_pooleador(self, nombre_plugin_pooleador):
         """Metodo para crear un pooleador concreto"""
-        match nombre_pooleador:
-            case "PooleadorMXProduct":
+        match nombre_plugin_pooleador:
+            case "obtenerInfoPoolesSNMP_MX.json":
                 return PooleadorMXProduct()
-            case "PooleadorASRProduct":
+            case "obtenerInfoPoolesSNMP_ASR9K.json":
                 return PooleadorASRProduct()
-            case "Pooleador10000Product":
+            case "obtenerInfoPoolesSNMP_ciscoLegacy_10000.json":
                 return Pooleador10000Product()
-            case "PooleadorE320Product":
+            case "obtenerInfoPoolesSNMP_juniperLegacyE.json":
                 return PooleadorE320Product()
             case _:
                 return None

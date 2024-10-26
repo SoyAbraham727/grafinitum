@@ -10,5 +10,5 @@ from abc import ABC, abstractmethod
 class PooleadorFactory(ABC):
     """Clase Abstracta de pooleador"""
     @abstractmethod
-    def crear_pooleador(self, nombre_pooleador):
+    def crear_pooleador(self, nombre_plugin_pooleador):
         """Metodo para crear un pooleador concreto"""

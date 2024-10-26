@@ -94,9 +94,6 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
         :timestamp: Valor numerico para representar la hora de ejecucion
         :return failed_hosts, not_inventory_present: Donde failed_host se refiere a los equipos que no puedieron ser ejecutados
         y not_inventory_present a los equipos que no se encontraron en el inventario"""
-        # C000 - código de estado exitoso de Lila
-        if "C000" not in respuesta_lila["statusCode"]:
-            return  None, None # Si no hay código exitoso, retornamos listas vacias
 
         # Se obtienen los equipos no encontrados en inventario y los fallidos.
         not_inventory_present = respuesta_lila["response"].pop("notInventoryPresent",[])
