@@ -1,0 +1,65 @@
+{
+    "nombreLilaApp": "Obtener Info Pooles - SNMP: ASR9K",
+    "descripcion": "Aplicación para obtener información de pooles de equipos DSL",
+    "workersLimit" : 100,
+    "filtrosEquipos" : [
+        {
+            "name": [],
+            "hostname": [],
+            "platform": [],
+            "groups": [],
+            "central": [],
+            "divisional": [],
+            "layer": [],
+            "modelo": ["ASR"],
+            "proveedor": [],
+            "service": ["DSL"],
+            "type": [],
+            "version": [],
+            "names": [],
+            "driverConnection": ""
+        }
+    ],
+    "tipoComando": "snmp-walk",
+    "tipoRed": "UNINET",
+    "tipoProtocolo": "snmp",
+    "saveCommands": false,
+    "saveFile": false,
+    "deleteCommands": false,
+    "comandosList":[
+        {
+	    "idComando": 101,
+            "__doc__": "Obtiene el nombre de los pooles registrados : Cisco ASR9K",
+            "vendor": "Cisco",
+            "comando": "1.3.6.1.4.1.9.9.748.1.2.2.1.4",
+            "validacionString": ["(NO_INTERNET|POOL_TELMEX)", "IPV6", "CGN"], 
+            "tipoValidacion": "SNMP", 
+            "tipoValidacionMetod": "researchValue",
+            "validation": true
+        },
+        {
+	    "idComando": 102,
+            "__doc__": "Obtiene el numero de direcciones de los pooles en uso : Cisco ASR9K",
+            "vendor": "Cisco",
+            "comando": "1.3.6.1.4.1.9.9.748.1.2.2.1.10",
+            "validacionString": "", 
+            "tipoValidacion": "", 
+            "tipoValidacionMetod": "",
+            "validation": false
+        },
+	{
+	    "idComando": 103,
+            "__doc__": "Obtiene el numero de direcciones de los pooles libres : Cisco ASR9K",
+            "vendor": "Cisco",
+            "comando": "1.3.6.1.4.1.9.9.748.1.2.2.1.11",
+            "validacionString": "", 
+            "tipoValidacion": "", 
+            "tipoValidacionMetod": "",
+            "validation": false
+        }
+    ],
+    "destinatariosCorreo":[
+        {"to":["gmoralea@uninet.com.mx","jbarranc@uninet.com.mx"]},
+        {"cc":["gmoralea@uninet.com.mx","jbarranc@uninet.com.mx"]}
+    ]
+}

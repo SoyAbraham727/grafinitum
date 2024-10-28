@@ -1,0 +1,55 @@
+{
+    "nombreLilaApp": "Obtener Info Pooles - SNMP: Cisco Legacy 10000",
+    "descripcion": "Aplicación para obtener información de pooles de equipos DSL",
+    "workersLimit" : 10,
+    "filtrosEquipos" : [
+        {
+            "name": [],
+            "hostname": [],
+            "platform": [],
+            "groups": [],
+            "central": [],
+            "divisional": [],
+            "layer": [],
+            "modelo": ["1000"],
+            "proveedor": [],
+            "service": ["DSL"],
+            "type": [],
+            "version": [],
+            "names": [],
+            "driverConnection": ""
+        }
+    ],
+    "tipoComando": "snmp-table",
+    "tipoRed": "UNINET",
+    "tipoProtocolo": "snmp",
+    "saveCommands": true,
+    "saveFile": false,
+    "deleteCommands": false,
+    "comandosList":[
+        {
+            "idComando": 101,
+            "__doc__": "Obtiene el numero de direcciones de los pooles libres : Cisco Legacy 10000",
+            "vendor": "Cisco",
+            "comando": "1.3.6.1.4.1.9.9.326.1.1.2.1.5",
+            "validacionString": "",
+            "tipoValidacion": "",
+            "tipoValidacionMetod": "",
+            "validation": false
+        },
+        {
+            "idComando": 102,
+            "__doc__": "Obtiene el numero de direcciones de los pooles en uso : Cisco Legacy 10000",
+            "vendor": "Cisco",
+            "comando": "1.3.6.1.4.1.9.9.326.1.1.2.1.6",
+            "validacionString": "",
+            "tipoValidacion": "",
+            "tipoValidacionMetod": "",
+            "validation": false
+        }
+    ],
+    "destinatariosCorreo":[
+        {"to":["gmoralea@uninet.com.mx"]},
+        {"cc":["gmoralea@uninet.com.mx"]}
+    ]
+}
