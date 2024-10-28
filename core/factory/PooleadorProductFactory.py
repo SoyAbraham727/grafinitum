@@ -5,6 +5,8 @@ __version__ = '1.0.0.R1'
 __email__ = 'gmoralea@uninet.com.mx, jbarranc@uninet.com.mx'
 __status__ = 'Desarrolllo'
 
+import sys 
+sys.path.append("/home/ngsop/lilaApp/plugins/scripts/grafinitum_backend")
 
 from core.factory.PooleadorFactory import PooleadorFactory
 from core.products.PooleadorMXProduct import PooleadorMXProduct

@@ -5,22 +5,23 @@ __version__ = '1.0.0.R1'
 __email__ = 'gmoralea@uninet.com.mx, jbarranc@uninet.com.mx'
 __status__ = 'Desarrolllo'
 
-import sys
+
 import time
 import concurrent.futures
-import json 
+import json
+import sys
+sys.path.append("/home/ngsop/lilaApp/plugins/utilidadesPlugins")
+sys.path.append("/home/ngsop/lilaApp/core")
+sys.path.append("/home/ngsop/lilaApp/plugins/scripts/grafinitum_backend")
 from utilidades.constantes import MONGO_POOLES_ASR9K_MX
 from db.connectionDB import mongoConnection
 from loggingConfig import LoggerFileConfig
 from constantesPlugins import LOG_CONFIG_FILES
-from UtilidadesPooles import *
-from ConstantesPooles import *
 from utilidadesPlugins import utilidadesPlugins
 from constantes.ConstantesGrafinitum import ConstantesGrafinitum
 from core.factory.PooleadorProductFactory import PooleadorProductFactory
 
-sys.path.append("/home/ngsop/lilaApp/plugins/utilidadesPlugins")
-sys.path.append("/home/ngsop/lilaApp/core")
+
 
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
@@ -73,7 +74,7 @@ def main_app():
 
     logger.info("Inicio::mainApp")
     respuesta = {'ASR9K': {}, 'MX': {}, 'CISCO_10000': {}, 'JUNIPER_E': {}}
-    workers_limit = 4
+    workers_limit = ConstantesGrafinitum.WORKERS_LIMIT
 
     try:
         inicio = time.time()

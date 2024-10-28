@@ -6,10 +6,13 @@ __email__ = 'gmoralea@uninet.com.mx, jbarranc@uninet.com.mx'
 __status__ = 'Desarrolllo'
 
 import sys
+# Añadir rutas al sistema
+sys.path.append("/home/ngsop/lilaApp/plugins/utilidadesPlugins")
+sys.path.append("/home/ngsop/lilaApp/core")
+
 import html
 import dominate
 # Importar módulos personalizados
-from ConstantesPooles import *
 from loggingConfig import LoggerFileConfig
 from constantesPlugins import LOG_CONFIG_FILES
 from modelsPlugins import PluginMail
@@ -17,9 +20,7 @@ from utilidadesPlugins import utilidadesPlugins
 from dominate.tags import *
 from datetime import datetime
 
-# Añadir rutas al sistema
-sys.path.append("/home/ngsop/lilaApp/plugins/utilidadesPlugins")
-sys.path.append("/home/ngsop/lilaApp/core")
+
 
 # Configuración del logger
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))

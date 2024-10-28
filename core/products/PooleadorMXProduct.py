@@ -6,22 +6,15 @@ __email__ = 'gmoralea@uninet.com.mx, jbarranc@uninet.com.mx'
 __status__ = 'Desarrolllo'
 
 import sys
-import re
-from utilidades.constantes import MONGO_POOLES_ASR9K_MX
-from db.connectionDB import mongoConnection
+sys.path.append("/home/ngsop/lilaApp/core")
+sys.path.append("/home/ngsop/lilaApp/plugins/scripts/grafinitum_backend")
 from loggingConfig import LoggerFileConfig
 from constantesPlugins import LOG_CONFIG_FILES
-from UtilidadesPooles import *
-from ConstantesPooles import *
-from utilidadesPlugins import utilidadesPlugins
-from core.products.PooleadorProduct import PooleadorProduct
 from core.products.PooleadorNextGeneration import PooleadorNextGeneration
-from utilidades.UtilidadesGrafinitum import UtilidadesGrafinitum
 from constantes.ConstantesGrafinitum import ConstantesGrafinitum
 
 
-sys.path.append("/home/ngsop/lilaApp/plugins/utilidadesPlugins")
-sys.path.append("/home/ngsop/lilaApp/core")
+
 
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 

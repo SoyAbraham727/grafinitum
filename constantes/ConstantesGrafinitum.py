@@ -9,7 +9,7 @@ from modelsPlugins import PluginExecute
 
 class ConstantesGrafinitum:
     """Clase que define constantes para el manejo de pools en GRAFINITUM."""
-
+    WORKERS_LIMIT = 4
     # Nombres de los tipos de pools
     LISTA_NOMBRE_POOLES = ["ipv4", "ipv6", "cgnat"]
 

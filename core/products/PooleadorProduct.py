@@ -5,7 +5,6 @@ __version__ = '1.0.0.R1'
 __email__ = 'gmoralea@uninet.com.mx, jbarranc@uninet.com.mx'
 __status__ = 'Desarrolllo'
 
-from utilidadesPlugins import utilidadesPlugins
 from abc import ABC, abstractmethod
 
 class PooleadorProduct(ABC):

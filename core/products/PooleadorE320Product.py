@@ -6,22 +6,13 @@ __email__ = 'gmoralea@uninet.com.mx, jbarranc@uninet.com.mx'
 __status__ = 'Desarrolllo'
 
 import sys
-import re
-from utilidades.constantes import MONGO_POOLES_ASR9K_MX
-from db.connectionDB import mongoConnection
-from loggingConfig import LoggerFileConfig
-from constantesPlugins import LOG_CONFIG_FILES
-from UtilidadesPooles import *
-from ConstantesPooles import *
-from utilidadesPlugins import utilidadesPlugins
-from core.products.PooleadorLegacy import PooleadorLegacy
-from utilidades.UtilidadesGrafinitum import UtilidadesGrafinitum
-from constantes.ConstantesGrafinitum import ConstantesGrafinitum
-
-
-
 sys.path.append("/home/ngsop/lilaApp/plugins/utilidadesPlugins")
 sys.path.append("/home/ngsop/lilaApp/core")
+sys.path.append("/home/ngsop/lilaApp/plugins/scripts/grafinitum_backend")
+from loggingConfig import LoggerFileConfig
+from constantesPlugins import LOG_CONFIG_FILES
+from core.products.PooleadorLegacy import PooleadorLegacy
+from utilidades.UtilidadesGrafinitum import UtilidadesGrafinitum
 
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
@@ -72,9 +63,9 @@ class PooleadorE320Product(PooleadorLegacy):
 
                 # Generar el registro
                 registro = { "timestamp":timestamp, "device":nombre_equipo, "data":pool_ipv4} #Se elimina la llamada a los metodos, se realiza en código
-
+                logger.info(f"REGISTRO DB :::: {registro}")
                 # Guardar el registro en la base de datos
-                db.saveData(registro, 'ipv4') #Se elimina la llamada a los metodos
+                #db.saveData(registro, 'ipv4') #Se elimina la llamada a los metodos
 
                 pool_ipv4 = pool_ipv4_inicial.copy() #Se inicializa nuevamente pool_ipv4
 

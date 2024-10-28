@@ -5,23 +5,21 @@ __version__ = '1.0.0.R1'
 __email__ = 'gmoralea@uninet.com.mx, jbarranc@uninet.com.mx'
 __status__ = 'Desarrolllo'
 
-import sys
+
 import re
-from utilidades.constantes import MONGO_POOLES_ASR9K_MX
-from db.connectionDB import mongoConnection
-from loggingConfig import LoggerFileConfig
+import sys
+sys.path.append("/home/ngsop/lilaApp/core")
+sys.path.append("/home/ngsop/lilaApp/plugins/scripts/grafinitum_backend")
+sys.path.append("/home/ngsop/lilaApp/plugins/utilidadesPlugins")
+from utilidades.loggingConfig import LoggerFileConfig
 from constantesPlugins import LOG_CONFIG_FILES
-from UtilidadesPooles import *
-from ConstantesPooles import *
-from utilidadesPlugins import utilidadesPlugins
-from modelsPlugins import PluginMail
 from core.products.PooleadorProduct import PooleadorProduct
 from utilidades.UtilidadesGrafinitum import UtilidadesGrafinitum
 from constantes.ConstantesGrafinitum import ConstantesGrafinitum
+
 from abc import ABC, abstractmethod
 
-sys.path.append("/home/ngsop/lilaApp/plugins/utilidadesPlugins")
-sys.path.append("/home/ngsop/lilaApp/core")
+
 
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
@@ -116,9 +114,10 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
                         
                         # Generar el registro
                         registro = { "timestamp":timestamp, "device":nombre_equipo, "data":pooles[pool_name] } #Se elimina la llamada a los metodos, se realiza en código
-
+                        logger.info(f"REGISTRO DB :::: {registro}")
+                        
                         # Guardar el registro en la base de datos
-                        db.saveData(registro, pool_name) #Se elimina la llamada a los metodos
+                        #db.saveData(registro, pool_name) #Se elimina la llamada a los metodos
 
             except Exception as error_construir_informcion:
                 logger.error(f"Error al construir informacion del equipo {nombre_equipo}: {error_construir_informcion}")
