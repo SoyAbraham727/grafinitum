@@ -22,10 +22,12 @@ class PooleadorMXProduct(PooleadorNextGeneration):
     """Clase concreta de pooleador para Juniper MX"""
 
     def homologar_pooles(self, pooles,info_pool1, info_pool2):
-        """Metodo para homologar la informacion de los pooles configurados
-        :pooles: Son los pooles configurados en un equipo
-        :info_pool1: Se refiere a la cantidad de pooles totales
-        :info_pool2: Se refiere a la cantidad de pooles ocupados
+        """Metodo para homologar la informacion de los pooles configurados.
+
+        :param pooles: Pooles configurados en un equipo.
+        :param info_pool1: Cantidad de pooles totales.
+        :param info_pool2: Cantidad de pooles ocupados.
+        :returns Pooles homologados: Pooles homologados con pooles totales, libres y ocupados.
         """
         
         pooles_homologados = {}
@@ -53,6 +55,7 @@ class PooleadorMXProduct(PooleadorNextGeneration):
                             "LIBRES": pooles_libres
                         })
             logger.info(f"pooles homologados MX :::: { pooles_homologados }")
+
         except Exception as error_homologar_informcion:
             logger.error(f"Error al homologar pooles en equipo:{error_homologar_informcion}")
 

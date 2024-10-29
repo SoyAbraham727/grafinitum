@@ -26,10 +26,13 @@ from datetime import datetime
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
 class UtilidadesGrafinitum:
-    """Utilidades para Grafinitum"""
+    """Clase de Utilidades para Grafinitum."""
 
     def gen_html_alert(self, exception):
-        """Genera una alerta en formato HTML."""
+        """Genera una alerta en formato HTML.
+        
+        :param exception: Mensaje de error que se mostrara en el correo enviado.
+        """
         logger.info("inicio::genHTMLAlert:GRAFINITUM")
         try:
             format = datetime.today().strftime('%Y-%m-%d %H:%M')
@@ -67,7 +70,11 @@ class UtilidadesGrafinitum:
             return ""
 
     def enviar_correo_notificacion(self, exception, titulo):
-        """Envía una notificación por correo con el mensaje especificado."""
+        """Envía una notificación por correo con el mensaje especificado.
+        
+        :param exception: Mensaje de error que se mostrara en el correo enviado.
+        :param titulo: Mensaje mostrado en el asunto del correo.
+        """
         
         try:
             # Crear el objeto de correo

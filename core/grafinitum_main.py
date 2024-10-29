@@ -21,13 +21,10 @@ from utilidadesPlugins import utilidadesPlugins
 from constantes.ConstantesGrafinitum import ConstantesGrafinitum
 from core.factory.PooleadorProductFactory import PooleadorProductFactory
 
-
-
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
 def guardar_objeto_como_json(objeto, ruta_archivo):
-    """
-    Guarda un objeto Python como un archivo JSON en la ruta especificada.
+    """Guarda un objeto Python como un archivo JSON en la ruta especificada.
 
     :param objeto: El objeto Python a guardar.
     :param ruta_archivo: La ruta al archivo JSON donde se guardará el objeto.
@@ -36,7 +33,13 @@ def guardar_objeto_como_json(objeto, ruta_archivo):
         json.dump(objeto, archivo,indent=2) 
 
 def obtener_info_poles_snmp(timestamp, db, plugin_execute):
-    """Obtiene y guarda toda la informacion de los pooles para todos los equipos dsl"""
+    """Obtiene y guarda toda la informacion de los pooles para todos los equipos dsl.
+
+    :param timestamp: Valor numerico para representar la fecha y hora de ejecucion.
+    :param db: instancia de conexion a la base de datos.
+    :param plugin_execute: Plugin que sera ejecutado.
+    :returns: failed_hosts, not_inventory_present, donde failed_host se refiere a los equipos que no puedieron ser ejecutados
+    y not_inventory_present a los equipos que no se encontraron en el inventario."""
 
     logger.info(f"[+] Inicio de ejecucion de plugin: {plugin_execute.nameApp}")
 
@@ -49,7 +52,7 @@ def obtener_info_poles_snmp(timestamp, db, plugin_execute):
 
         respuesta_lila = utilidadesPlugins().sendPostLiLaExecutor(plugin_execute)
         respuesta_lila = respuesta_lila.json()
-        #guardar_objeto_como_json(respuesta_lila,f"{plugin_execute.namePlugin}")
+        guardar_objeto_como_json(respuesta_lila,f"{plugin_execute.namePlugin}")
 
         if "C000" in respuesta_lila["statusCode"]:
             pooleador = PooleadorProductFactory().crear_pooleador(plugin_execute.namePlugin)
@@ -65,7 +68,8 @@ def obtener_info_poles_snmp(timestamp, db, plugin_execute):
         logger.info(f"[+] Fin de ejecucion de plugin: {plugin_execute.nameApp}")
     
     except Exception as error_obtener_info_poles_snmp:
-        logger.error(f"[+] Error en programa obtener_info_poles_snmp {error_obtener_info_poles_snmp}")
+        logger.error(f"[+] Error en programa obtener_info_poles_snmp {error_obtener_info_poles_snmp}\n"
+                     f"Plugin ejecutado: {plugin_execute.namePlugin}")
 
     return failed_hosts, not_inventory_present
 
@@ -82,10 +86,10 @@ def main_app():
 
         # Lista de plugins en el mismo orden que las claves de 'respuesta'
         plugins = [
-            #ConstantesGrafinitum.pluginExecute_ASR9K
-            #ConstantesGrafinitum.pluginExecute_MX
-            ConstantesGrafinitum.pluginExecute_CISCO_10000
-            #ConstantesGrafinitum.pluginExecute_JUNIPER_E320
+            ConstantesGrafinitum.pluginExecute_ASR9K,
+            ConstantesGrafinitum.pluginExecute_MX,
+            ConstantesGrafinitum.pluginExecute_CISCO_10000,
+            ConstantesGrafinitum.pluginExecute_JUNIPER_E320
         ]
 
         logger.info(ConstantesGrafinitum.pluginExecute_CISCO_10000)

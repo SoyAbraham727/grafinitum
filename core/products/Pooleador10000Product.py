@@ -18,15 +18,15 @@ from constantes.ConstantesGrafinitum import ConstantesGrafinitum
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
 class Pooleador10000Product(PooleadorLegacy):
-    """Clase que implementa PooleadorProduct para equipos legacy 10000"""
+    """Clase que implementa PooleadorProduct para equipos legacy 10000."""
 
     def construir_informacion(self, db, respuesta_lila, timestamp):
-        """Metodo para construir el diccionario de IPV4 de cada equipo
-        legacy cisco.
+        """Metodo para construir el diccionario de IPV4 de cada equipolegacy cisco.
+
         :param db: Instancia de conexion a la base de datos.
-        :respuesta_lila: Es la respuesta de lila al ejecutar un plugin
-        :timestamp: Valor numerico para representar la hora de ejecucion
-        :return failed_hosts, not_inventory_present: Donde failed_host se refiere a los equipos que no puedieron ser ejecutados
+        :param respuesta_lila: Respuesta de lila al ejecutar un plugin
+        :param timestamp: Valor numerico para representar la hora de ejecucion
+        :returns failed_hosts, not_inventory_present: Donde failed_host se refiere a los equipos que no puedieron ser ejecutados
         y not_inventory_present a los equipos que no se encontraron en el inventario"""
 
         pool_ipv4_inicial = {'ipv4': {'IPV4_TOTAL':{'TOTALES': 0,'OCUPADOS': 0, 'LIBRES': 0}}}
@@ -61,10 +61,10 @@ class Pooleador10000Product(PooleadorLegacy):
 
                 # Generar el registro
                 registro = { "timestamp":timestamp, "device":nombre_equipo, "data":pool_ipv4} #Se elimina la llamada a los metodos, se realiza en código
-                logger.info(f"REGISTRO DB :::: {registro}")
+                #logger.info(f"REGISTRO DB :::: {registro}")
                 
                 # Guardar el registro en la base de datos
-                #db.saveData(registro, 'ipv4') #Se elimina la llamada a los metodos
+                db.saveData(registro, 'ipv4') #Se elimina la llamada a los metodos
 
                 pool_ipv4 = pool_ipv4_inicial.copy()
 

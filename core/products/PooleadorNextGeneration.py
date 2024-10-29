@@ -24,44 +24,44 @@ from abc import ABC, abstractmethod
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
 class PooleadorNextGeneration(PooleadorProduct, ABC):
-    """Clase Abstracta de pooleadorProduct"""
+    """Clase Abstracta de pooleadorProduct."""
 
     @abstractmethod
     def homologar_pooles(self, pooles, info_pool1, info_pool2):
-         """Metodo para homologar la informacion de los pooles configurados"""
+         """Metodo para homologar la informacion de los pooles configurados."""
 
 
-    def ordenar_diccionario_oid (self, diccionario):
+    def actualizar_oid (self, diccionario):
+        """Metodo que actualiza el diccionario con el ultimo valor en su key (oid).
 
-        diccionario_ordenado = {}
+        :param diccionario: Diccionario al cual se le cambiara el valor de su oid.
+        :returns diccionario_actualizado: Diccionario con sus oids actualizadas.
+        """
+        diccionario_actualizado = {oid.split(".")[-1] : valor for oid, valor in diccionario.items()}
 
-        for oid, valor in diccionario.items():
-            diccionario_ordenado.update({oid.split(".")[-1] : valor})
-
-        return diccionario_ordenado
+        return diccionario_actualizado
 
     def extraer_informacion(self, nombre_equipo, info_equipo):
-        """Método para extraer la información de la respuesta de lila para un equipo
-        :nombre_equipo: Es el nombre del equipo
-        :info_equipo: Es la salida de los comandos ejecutados en un equipo.
+        """Método para extraer la información de la respuesta de lila para un equipo.
+
+        :param nombre_equipo: Nombre del equipo del que se extraera la informacion.
+        :param info_equipo: Salida de los comandos ejecutados en un equipo.
+        :returns Pooles homologados: Pooles homologados con pooles totales, libres y ocupados.
         """
         
         pooles = {"ipv4": {}, "ipv6": {}, "cgnat": {}}
         pooles_homologados = {"ipv4": {}, "ipv6": {}, "cgnat": {}}
+
         try:
             validaciones = info_equipo["101"].get("resultadosValidacion", {})
-            totales = info_equipo["102"].get("salidaComando", {})
-            ocupados = info_equipo["103"].get("salidaComando", {})
-
-            pooles["ipv4"] = validaciones.get("(NO_INTERNET|POOL_TELMEX)", {})
-            pooles["ipv6"] = validaciones.get("IPV6", {})
-            pooles["cgnat"] = validaciones.get("CGN", {})
-
-            totales = self.ordenar_diccionario_oid(totales.copy())
-            ocupados = self.ordenar_diccionario_oid(ocupados.copy())
-            pooles["ipv4"] = self.ordenar_diccionario_oid(pooles["ipv4"].copy())
-            pooles["ipv6"] = self.ordenar_diccionario_oid(pooles["ipv6"].copy())
-            pooles["cgnat"] = self.ordenar_diccionario_oid(pooles["cgnat"].copy())
+            pooles.update({
+                "ipv4": self.actualizar_oid(validaciones.get("(NO_INTERNET|POOL_TELMEX)", {})),
+                "ipv6": self.actualizar_oid(validaciones.get("IPV6", {})),
+                "cgnat": self.actualizar_oid(validaciones.get("CGN", {}))
+            })
+            
+            totales = self.actualizar_oid(info_equipo["102"].get("salidaComando", {}))
+            ocupados = self.actualizar_oid(info_equipo["103"].get("salidaComando", {}))
 
             pooles_homologados = self.homologar_pooles(pooles, totales, ocupados)
 
@@ -76,7 +76,13 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
     
 
     def calcular_pooles_totales(self, pooles, identificadores, nombre_pool):
-        """Funcion para calcular pooles totales por equipo"""
+        """Funcion para calcular pooles totales por equipo.
+
+        :param pooles: Diccionario de pooles.
+        :param identificadores: Usados para identificar el tipo de pool.
+        :param nombre_pool: ipv4, ipv6, cgnat.
+        :returns pooles: Diccionario de pooles con la suma total.
+        """
 
         totales = {"TOTALES": None, "OCUPADOS": None, "LIBRES": None}
         try:
@@ -102,10 +108,11 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
     def construir_informacion(self, db, respuesta_lila, timestamp):
         """Método para construir la información de los pooles (ipv4,ipv6,cgnat) totales, 
         libres y ocupados por equipo.
+
         :param db: Instancia de conexion a la base de datos.
-        :respuesta_lila: Es la respuesta de lila al ejecutar un plugin
-        :timestamp: Valor numerico para representar la hora de ejecucion
-        :return failed_hosts, not_inventory_present: Donde failed_host se refiere a los equipos que no puedieron ser ejecutados
+        :param respuesta_lila: Respuesta de lila al ejecutar un plugin.
+        :param timestamp: Valor numerico para representar la hora de ejecucion.
+        :returns failed_hosts, not_inventory_present: donde failed_host se refiere a los equipos que no puedieron ser ejecutados
         y not_inventory_present a los equipos que no se encontraron en el inventario"""
 
         # Se obtienen los equipos no encontrados en inventario y los fallidos.
@@ -129,10 +136,10 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
                         
                         # Generar el registro
                         registro = { "timestamp":timestamp, "device":nombre_equipo, "data":pooles[pool_name] } #Se elimina la llamada a los metodos, se realiza en código
-                        logger.info(f"REGISTRO DB :::: {registro}")
+                        #logger.info(f"REGISTRO DB :::: {registro}")
                         
                         # Guardar el registro en la base de datos
-                        #db.saveData(registro, pool_name) #Se elimina la llamada a los metodos
+                        db.saveData(registro, pool_name) #Se elimina la llamada a los metodos
 
             except Exception as error_construir_informcion:
                 logger.error(f"Error al construir informacion del equipo {nombre_equipo}: {error_construir_informcion}")

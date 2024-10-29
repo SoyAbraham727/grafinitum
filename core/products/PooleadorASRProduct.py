@@ -20,27 +20,29 @@ class PooleadorASRProduct(PooleadorNextGeneration):
     """Clase concreta de pooleador para Cisco ASR9K"""
 
     def homologar_pooles(self, pooles,info_pool1, info_pool2):
-        """Metodo para homologar la informacion de los pooles configurados
-        :pooles: Son los pooles configurados en un equipo
-        :info_pool1: Se refiere a la cantidad de pooles ocupados
-        :info_pool2: Se refiere a la cantidad de pooles libres
+        """Metodo para homologar la informacion de los pooles configurados.
+
+        :param pooles: Pooles configurados en un equipo.
+        :param info_pool1: Cantidad de pooles ocupados.
+        :param info_pool2: Cantidad de pooles libres.
+        :returns Pooles homologados: Pooles homologados con pooles totales, libres y ocupados.
         """
        
-        logger.info(f"pooles :::: {pooles}")
-        logger.info(f"info_pool1 :::: {info_pool1}")
-        logger.info(f"info_pool2 :::: {info_pool2}")
+        #logger.info(f"pooles :::: {pooles}")
+        #logger.info(f"info_pool1 :::: {info_pool1}")
+        #logger.info(f"info_pool2 :::: {info_pool2}")
         pooles_homologados={}
-        logger.info(f"diccionario :::: {pooles_homologados}")
+        #logger.info(f"diccionario :::: {pooles_homologados}")
         try:
             for pool in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
 
-                logger.info(f"info_pool:::: {pool}")
+                #logger.info(f"info_pool:::: {pool}")
             
                 if pooles.get(pool):
-                    logger.info(f"Pool de trabajo :::: {pooles[pool]}")
+                    #logger.info(f"Pool de trabajo :::: {pooles[pool]}")
 
                     for oid, nombre_pool in pooles[pool].items():
-                        logger.info(f"nombre_pool :::: {nombre_pool}")
+                        #logger.info(f"nombre_pool :::: {nombre_pool}")
                         pooles_ocupados = info_pool1.get(oid,None)
                         pooles_libres = info_pool2.get(oid,None)
 
@@ -49,13 +51,13 @@ class PooleadorASRProduct(PooleadorNextGeneration):
                         if nombre_pool not in pooles_homologados[pool]:
                             pooles_homologados[pool][nombre_pool] = {}                        
 
-                        logger.info(f"pooles_ocupados :::: {pooles_ocupados}")
-                        logger.info(f"pooles_libres :::: {pooles_libres}")
+                        #logger.info(f"pooles_ocupados :::: {pooles_ocupados}")
+                        #logger.info(f"pooles_libres :::: {pooles_libres}")
                     
                         if pooles_ocupados is not None and \
                             pooles_libres is not None:
                             pooles_totales = pooles_ocupados + pooles_libres
-                            logger.info(f"pooles_totales :::: {pooles_totales}")
+                            #logger.info(f"pooles_totales :::: {pooles_totales}")
                         else:
                             pooles_ocupados = pooles_totales = pooles_libres = None
 
@@ -65,8 +67,8 @@ class PooleadorASRProduct(PooleadorNextGeneration):
                             "LIBRES": pooles_libres
                         }
                         logger.info(f"pooles homologados :::: {pooles_homologados}")
-        except Exception as error_homologar_informcion:
-            logger.error(f"Error al homologar pooles en equipo:{error_homologar_informcion}")
+        except Exception as error_homologar_informacion:
+            logger.error(f"Error al homologar pooles en equipo:{error_homologar_informacion}")
 
         return pooles_homologados
 

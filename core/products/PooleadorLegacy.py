@@ -19,12 +19,14 @@ logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
 class PooleadorLegacy(PooleadorProduct, ABC):
     """Clase Abstracta que implementa el método extraer_informacion de la interfazPooleadorProduct
-    para equipos legacy"""
+    para equipos legacy."""
 
     def extraer_informacion(self, nombre_equipo, info_equipo):
-        """Metodo utilizado para extraer la informacion de los pooles
-        configurados en un equipo
-        :info_equipo: Se refiere a la info de lila para un equipo
+        """Metodo utilizado para extraer la informacion de los pooles configurados en un equipo.
+
+        :param nombre_equipo: Nombre del equipo del cual se extraera informacion.
+        :param info_equipo: Se refiere a la respuesta de lila para un equipo.
+        :returns salida_comando: Salida de la ejecucion de un comando (oid).
         """
         salida_comando = {}
         try:

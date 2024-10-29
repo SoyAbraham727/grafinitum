@@ -18,7 +18,11 @@ class PooleadorProductFactory(PooleadorFactory):
     """Clase Concreta para crear pooleadorProduct"""
     
     def crear_pooleador(self, nombre_plugin_pooleador):
-        """Metodo para crear un pooleador concreto"""
+        """Metodo para crear un pooleador concreto.
+        
+        :param nombre_plugin: Nombre del plugin ejecutado.
+        :returns PooleadorProduct: Instancia de clase concreta de PooleadorProduct, segun el nombre del plugin.
+        """
         match nombre_plugin_pooleador:
             case "obtenerInfoPoolesSNMP_MX.json":
                 return PooleadorMXProduct()
