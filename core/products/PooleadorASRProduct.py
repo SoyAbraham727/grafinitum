@@ -66,7 +66,7 @@ class PooleadorASRProduct(PooleadorNextGeneration):
                             "OCUPADOS": pooles_ocupados,
                             "LIBRES": pooles_libres
                         }
-                        logger.info(f"pooles homologados :::: {pooles_homologados}")
+                        #logger.info(f"pooles homologados :::: {pooles_homologados}")
         except Exception as error_homologar_informacion:
             logger.error(f"Error al homologar pooles en equipo:{error_homologar_informacion}")
 

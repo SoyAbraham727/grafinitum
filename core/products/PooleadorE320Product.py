@@ -62,7 +62,7 @@ class PooleadorE320Product(PooleadorLegacy):
                         break
 
                 # Generar el registro
-                registro = { "timestamp":timestamp, "device":nombre_equipo, "data":pool_ipv4} #Se elimina la llamada a los metodos, se realiza en código
+                registro = { "timestamp":timestamp, "device":nombre_equipo, "data":pool_ipv4['ipv4']} #Se elimina la llamada a los metodos, se realiza en código
                 #logger.info(f"REGISTRO DB :::: {registro}")
                 # Guardar el registro en la base de datos
                 db.saveData(registro, 'ipv4') #Se elimina la llamada a los metodos
