@@ -52,7 +52,7 @@ def obtener_info_poles_snmp(timestamp, db, plugin_execute):
 
         respuesta_lila = utilidadesPlugins().sendPostLiLaExecutor(plugin_execute)
         respuesta_lila = respuesta_lila.json()
-        guardar_objeto_como_json(respuesta_lila,f"{plugin_execute.namePlugin}")
+        #guardar_objeto_como_json(respuesta_lila,f"{plugin_execute.namePlugin}")
 
         if "C000" in respuesta_lila["statusCode"]:
             pooleador = PooleadorProductFactory().crear_pooleador(plugin_execute.namePlugin)
