@@ -120,10 +120,8 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
         failed_hosts = respuesta_lila["response"].pop("failed_hosts",[])
 
         for nombre_equipo, info_equipo in respuesta_lila["response"].items(): #Se corrige
-            logger.info(f"Inicia :: construir_informacion :: para el equipo: {nombre_equipo}")
             try:
                 pooles = self.extraer_informacion(nombre_equipo, info_equipo)#Se corrige error
-                #logger.info(f"respuesta pooles homologados:::: {pooles}")
                 for pool_name in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
                     if pooles.get(pool_name):
 
@@ -136,7 +134,6 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
                         
                         # Generar el registro
                         registro = { "timestamp":timestamp, "device":nombre_equipo, "data":pooles[pool_name] } #Se elimina la llamada a los metodos, se realiza en código
-                        #logger.info(f"REGISTRO DB :::: {registro}")
                         
                         # Guardar el registro en la base de datos
                         db.saveData(registro, pool_name) #Se elimina la llamada a los metodos

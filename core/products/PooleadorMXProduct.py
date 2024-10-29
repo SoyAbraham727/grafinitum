@@ -54,7 +54,6 @@ class PooleadorMXProduct(PooleadorNextGeneration):
                             "OCUPADOS": pooles_ocupados,
                             "LIBRES": pooles_libres
                         })
-            #logger.info(f"pooles homologados MX :::: { pooles_homologados }")
 
         except Exception as error_homologar_informcion:
             logger.error(f"Error al homologar pooles en equipo:{error_homologar_informcion}")

@@ -56,7 +56,9 @@ def obtener_info_poles_snmp(timestamp, db, plugin_execute):
 
         if "C000" in respuesta_lila["statusCode"]:
             pooleador = PooleadorProductFactory().crear_pooleador(plugin_execute.namePlugin)
+            logger.info(f"Inicia :: construir_informacion :: {plugin_execute.nameApp}")
             failed_hosts, not_inventory_present = pooleador.construir_informacion(db, respuesta_lila, timestamp)
+            logger.info(f"Termina :: construir_informacion :: {plugin_execute.nameApp}")
 
         else:
             logger.warning(f"Se detectó código de error en: {plugin_execute.nameApp}, {respuesta_lila}")
@@ -64,7 +66,6 @@ def obtener_info_poles_snmp(timestamp, db, plugin_execute):
             failed_hosts = respuesta_lila["response"].get("failed_hosts",{})
             not_inventory_present = respuesta_lila["response"].get("not_inventory_present",{})
         
-        #logger.info("response: %s" % response)
         logger.info(f"[+] Fin de ejecucion de plugin: {plugin_execute.nameApp}")
     
     except Exception as error_obtener_info_poles_snmp:

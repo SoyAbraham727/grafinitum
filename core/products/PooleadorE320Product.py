@@ -45,25 +45,30 @@ class PooleadorE320Product(PooleadorLegacy):
                     if salida_comando:
                         # Obtener los valores correspondientes a '1' y '2'
                         total_pool_ipv4 = salida_comando.get('1', salida_comando.get('2', None))
-
+                        logger.info(f"{nombre_equipo} :: total_pool_ipv4:: {total_pool_ipv4}")
                         # Actualizar el diccionario dataDict
-                        if id_comando == '101' and total_pool_ipv4:
+                        if id_comando == '101' and total_pool_ipv4 is not None:
                             pool_ipv4['ipv4']['IPV4_TOTAL']['TOTALES'] = total_pool_ipv4
-                        elif id_comando == '102' and total_pool_ipv4:
+                            logger.info(f"{nombre_equipo} :: TOTALES:: {total_pool_ipv4}")
+                        elif id_comando == '102' and total_pool_ipv4 is not None:
                             pool_ipv4['ipv4']['IPV4_TOTAL']['OCUPADOS'] = total_pool_ipv4
+                            logger.info(f"{nombre_equipo} :: OCUPADOS:: {total_pool_ipv4}")
                         else:
+                            logger.info(f"{nombre_equipo} :: Entra al Break None::")
                             pool_ipv4 = pool_ipv4_none.copy()
                             break
 
                         pool_ipv4['ipv4']['IPV4_TOTAL']['LIBRES'] = pool_ipv4['ipv4']['IPV4_TOTAL']['TOTALES'] - pool_ipv4['ipv4']['IPV4_TOTAL']['OCUPADOS']
+                        logger.info(f"{nombre_equipo} :: LIBRES:: {pool_ipv4['ipv4']['IPV4_TOTAL']['LIBRES']}")
 
                     else:
+                        logger.info(f"{nombre_equipo} :: Entra al Break None::")
                         pool_ipv4 = pool_ipv4_none.copy()
                         break
 
                 # Generar el registro
                 registro = { "timestamp":timestamp, "device":nombre_equipo, "data":pool_ipv4['ipv4']} #Se elimina la llamada a los metodos, se realiza en código
-                #logger.info(f"REGISTRO DB :::: {registro}")
+                
                 # Guardar el registro en la base de datos
                 db.saveData(registro, 'ipv4') #Se elimina la llamada a los metodos
 
