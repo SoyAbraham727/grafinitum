@@ -29,22 +29,31 @@ class PooleadorMXProduct(PooleadorNextGeneration):
         """
         
         pooles_homologados = {}
+        try:
+            for pool in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
+                if pooles.get(pool):
+                    for oid, nombre_pool in pooles[pool].items():
+                        pooles_totales = info_pool1.get(oid,None)
+                        pooles_ocupados = info_pool2.get(oid,None)
 
-        for pool in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
-            if pooles.get(pool):
-                for oid, nombre_pool in pooles[pool].items():
-                    pooles_totales = info_pool1.get(oid,None)
-                    pooles_ocupados = info_pool2.get(oid,None)
+                        if pool not in pooles_homologados:
+                            pooles_homologados[pool] = {}
+                        if nombre_pool not in pooles_homologados[pool]:
+                            pooles_homologados[pool][nombre_pool] = {}
 
-                    if pooles_totales is not None and \
-                        pooles_ocupados is not None:
-                        pooles_libres = pooles_totales - pooles_ocupados
-                    else:
-                        pooles_totales = pooles_ocupados = pooles_libres = None
+                        if pooles_totales is not None and \
+                            pooles_ocupados is not None:
+                            pooles_libres = pooles_totales - pooles_ocupados
+                        else:
+                            pooles_totales = pooles_ocupados = pooles_libres = None
 
-                    pooles_homologados[nombre_pool] = {
-                        "TOTALES": pooles_totales,
-                        "OCUPADOS": pooles_ocupados,
-                        "LIBRES": pooles_libres
-                    }
-                pooles[pool].update(pooles_homologados)
+                        pooles_homologados[pool][nombre_pool].update({#Se actualiza directamente el diccionario
+                            "TOTALES": pooles_totales,
+                            "OCUPADOS": pooles_ocupados,
+                            "LIBRES": pooles_libres
+                        })
+                        logger.info(f"pooles homologados MX :::: { pooles_homologados }")
+        except Exception as error_homologar_informcion:
+            logger.error(f"Error al homologar pooles en equipo:{error_homologar_informcion}")
+
+        return pooles_homologados

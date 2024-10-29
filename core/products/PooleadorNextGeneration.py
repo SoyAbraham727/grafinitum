@@ -31,6 +31,15 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
          """Metodo para homologar la informacion de los pooles configurados"""
 
 
+    def ordenar_diccionario_oid (self, diccionario):
+
+        diccionario_ordenado = {}
+
+        for oid, valor in diccionario.items():
+            diccionario_ordenado.update({oid.split(".")[-1] : valor})
+
+        return diccionario_ordenado
+
     def extraer_informacion(self, nombre_equipo, info_equipo):
         """Método para extraer la información de la respuesta de lila para un equipo
         :nombre_equipo: Es el nombre del equipo
@@ -38,7 +47,7 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
         """
         
         pooles = {"ipv4": {}, "ipv6": {}, "cgnat": {}}
-        
+        pooles_homologados = {"ipv4": {}, "ipv6": {}, "cgnat": {}}
         try:
             validaciones = info_equipo["101"].get("resultadosValidacion", {})
             totales = info_equipo["102"].get("salidaComando", {})
@@ -48,16 +57,22 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
             pooles["ipv6"] = validaciones.get("IPV6", {})
             pooles["cgnat"] = validaciones.get("CGN", {})
 
-            self.homologar_pooles(pooles, totales, ocupados)
+            totales = self.ordenar_diccionario_oid(totales.copy())
+            ocupados = self.ordenar_diccionario_oid(ocupados.copy())
+            pooles["ipv4"] = self.ordenar_diccionario_oid(pooles["ipv4"].copy())
+            pooles["ipv6"] = self.ordenar_diccionario_oid(pooles["ipv6"].copy())
+            pooles["cgnat"] = self.ordenar_diccionario_oid(pooles["cgnat"].copy())
+
+            pooles_homologados = self.homologar_pooles(pooles, totales, ocupados)
 
         except KeyError as error_extraer_informcion:
             logger.error(f"Error al extraer información en equipo: {nombre_equipo}: {error_extraer_informcion}")
             titulo = f"GRAFINITUM: error_extraer_informacion en equipo: {nombre_equipo}"
             UtilidadesGrafinitum.enviar_correo_notificacion(self, error_extraer_informcion,titulo)
             
-            return pooles  # Retorna pooles vacíos en caso de error
+            return pooles_homologados  # Retorna pooles vacíos en caso de error
 
-        return pooles
+        return pooles_homologados
     
 
     def calcular_pooles_totales(self, pooles, identificadores, nombre_pool):
@@ -101,7 +116,7 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
             logger.info(f"Inicia :: construir_informacion :: para el equipo: {nombre_equipo}")
             try:
                 pooles = self.extraer_informacion(nombre_equipo, info_equipo)#Se corrige error
-                
+                logger.info(pooles)
                 for pool_name in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
                     if pooles.get(pool_name):
 
