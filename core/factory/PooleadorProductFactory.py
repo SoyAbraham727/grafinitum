@@ -31,4 +31,3 @@ class PooleadorProductFactory(PooleadorFactory):
             case _:
                 return None
 
-    

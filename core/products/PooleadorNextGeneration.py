@@ -116,7 +116,7 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
             logger.info(f"Inicia :: construir_informacion :: para el equipo: {nombre_equipo}")
             try:
                 pooles = self.extraer_informacion(nombre_equipo, info_equipo)#Se corrige error
-                logger.info(pooles)
+                logger.info(f"respuesta pooles homologados:::: {pooles}")
                 for pool_name in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
                     if pooles.get(pool_name):
 

@@ -44,11 +44,12 @@ def obtener_info_poles_snmp(timestamp, db, plugin_execute):
     not_inventory_present = {}
     respuesta_lila = None
 
+
     try:
 
         respuesta_lila = utilidadesPlugins().sendPostLiLaExecutor(plugin_execute)
         respuesta_lila = respuesta_lila.json()
-        guardar_objeto_como_json(respuesta_lila,f"{plugin_execute.namePlugin}")
+        #guardar_objeto_como_json(respuesta_lila,f"{plugin_execute.namePlugin}")
 
         if "C000" in respuesta_lila["statusCode"]:
             pooleador = PooleadorProductFactory().crear_pooleador(plugin_execute.namePlugin)
@@ -57,8 +58,8 @@ def obtener_info_poles_snmp(timestamp, db, plugin_execute):
         else:
             logger.warning(f"Se detectó código de error en: {plugin_execute.nameApp}, {respuesta_lila}")
 
-            failed_hosts = respuesta_lila["response"]["failed_hosts"]
-            not_inventory_present = respuesta_lila["response"]["not_inventory_present"]
+            failed_hosts = respuesta_lila["response"].get("failed_hosts",{})
+            not_inventory_present = respuesta_lila["response"].get("not_inventory_present",{})
         
         #logger.info("response: %s" % response)
         logger.info(f"[+] Fin de ejecucion de plugin: {plugin_execute.nameApp}")
@@ -81,11 +82,13 @@ def main_app():
 
         # Lista de plugins en el mismo orden que las claves de 'respuesta'
         plugins = [
-            ConstantesGrafinitum.pluginExecute_ASR9K,
-            ConstantesGrafinitum.pluginExecute_MX,
-            ConstantesGrafinitum.pluginExecute_CISCO_10000,
-            ConstantesGrafinitum.pluginExecute_JUNIPER_E320
+            #ConstantesGrafinitum.pluginExecute_ASR9K
+            #ConstantesGrafinitum.pluginExecute_MX
+            ConstantesGrafinitum.pluginExecute_CISCO_10000
+            #ConstantesGrafinitum.pluginExecute_JUNIPER_E320
         ]
+
+        logger.info(ConstantesGrafinitum.pluginExecute_CISCO_10000)
 
         mongo_db = mongoConnection(MONGO_POOLES_ASR9K_MX)
         timestamp = int(time.time() * 1000)

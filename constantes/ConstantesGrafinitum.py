@@ -1,4 +1,4 @@
-	# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 __author__ = 'Abraham Gonzalez Morales, Jesus Barranco Castillo'
 __copyright__ = 'Copyright 2021 UNINET. Todos los derechos Reservados'
 __version__ = '1.0.0.R1'
@@ -9,7 +9,9 @@ from modelsPlugins import PluginExecute
 
 class ConstantesGrafinitum:
     """Clase que define constantes para el manejo de pools en GRAFINITUM."""
+
     WORKERS_LIMIT = 4
+    
     # Nombres de los tipos de pools
     LISTA_NOMBRE_POOLES = ["ipv4", "ipv6", "cgnat"]
 

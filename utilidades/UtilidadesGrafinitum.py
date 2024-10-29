@@ -1,4 +1,4 @@
-	# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 __author__ = 'Abraham Gonzalez Morales, Jesus Barranco Castillo'
 __copyright__ = 'Copyright 2021 UNINET. Todos los derechos Reservados'
 __version__ = '1.0.0.R1'
@@ -86,5 +86,3 @@ class UtilidadesGrafinitum:
             utilidadesPlugins().sendEmailLilaNasBrain(pluginMail)
         except Exception as e:
             logger.error(f"Error al enviar correo: {e}")
-
-
