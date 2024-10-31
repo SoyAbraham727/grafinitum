@@ -179,7 +179,7 @@ class UtilidadesGrafinitum:
                 pooles = UtilidadesGrafinitum.obtener_pooles_configurados(self, db, nombre_equipo)
                 logger.info("termina :: obtener pooles equipos fallidos NextGen")
                 for pool in pooles:
-                    registro = UtilidadesGrafinitum.generar_registro(self, timestamp, nombre_equipo, ConstantesGrafinitum.POOLES_NULOS[pool])
+                    registro = UtilidadesGrafinitum.generar_registro(self, timestamp, info_equipo.copy(), ConstantesGrafinitum.POOLES_NULOS[pool])
                     logger.warning(f"EQUIPO FALLIDO: {nombre_equipo}\nREGISTRO DB:: {pool} ::: {registro}")
                     db.saveData(registro, pool)
     
@@ -193,15 +193,17 @@ class UtilidadesGrafinitum:
         for info_equipo in failed_hosts:
             for nombre_equipo in info_equipo.keys():
                 pool = "ipv4"
-                registro = UtilidadesGrafinitum.generar_registro(self, timestamp, nombre_equipo, ConstantesGrafinitum.POOLES_NULOS[pool])
+                registro = UtilidadesGrafinitum.generar_registro(self, timestamp, info_equipo.copy(), ConstantesGrafinitum.POOLES_NULOS[pool])
                 logger.warning(f"EQUIPO FALLIDO: {nombre_equipo}\nREGISTRO DB:: {pool} ::: {registro}")
                 db.saveData(registro, pool)
 
-    def generar_registro(self, timestamp, nombre_equipo,datos_pooleo):
+    def generar_registro(self, timestamp, info_equipo, datos_pooleo):
+        nombre_equipo, status = info_equipo.popitem()
         registro = {
                     "timestamp":timestamp, 
                     "device":nombre_equipo, 
                     "data":datos_pooleo,
+                    "status": status,
                     "timestampDate": datetime.fromtimestamp(timestamp / 1000, tz=timezone.utc)
                 }
         return registro

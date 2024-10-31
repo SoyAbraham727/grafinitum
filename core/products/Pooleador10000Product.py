@@ -39,7 +39,10 @@ class Pooleador10000Product(PooleadorLegacy):
             respuesta_lila["response"].pop("notInventoryPresent")
         failed_hosts = respuesta_lila["response"].pop("failed_hosts")
 
+        
+
         for nombre_equipo, info_equipo in respuesta_lila["response"].items():
+            info_equipo = {nombre_equipo:"OK"}
             try:
                 for id_comando, info_comando in info_equipo.items():
                     salida_comando = self.extraer_informacion(nombre_equipo, info_comando)
@@ -58,10 +61,11 @@ class Pooleador10000Product(PooleadorLegacy):
 
                     else:
                         pool_ipv4 = pool_ipv4_none.copy()
+                        info_equipo = {nombre_equipo:"Inclomplete data"}
                         break
 
                 # Generar el registro
-                registro = UtilidadesGrafinitum.generar_registro(self,timestamp, nombre_equipo, pool_ipv4['ipv4'])
+                registro = UtilidadesGrafinitum.generar_registro(self,timestamp, info_equipo, pool_ipv4['ipv4'])
 
                 # Guardar el registro en la base de datos
                 db.saveData(registro, 'ipv4') #Se elimina la llamada a los metodos

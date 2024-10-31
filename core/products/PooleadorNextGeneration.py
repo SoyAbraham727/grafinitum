@@ -84,8 +84,10 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
         :param nombre_pool: ipv4, ipv6, cgnat.
         :returns pooles: Diccionario de pooles con la suma total.
         """
-
+                                
         totales = {"TOTALES": None, "OCUPADOS": None, "LIBRES": None}
+        totales_none = totales.copy()
+        calculo_exitoso = True
         try:
             for pool_nombre, pool_valores in pooles[nombre_pool].items():
                 if any(re.match(patron, pool_nombre) for patron in identificadores):
@@ -96,7 +98,12 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
                             totales[key] += valor_actual
                         elif valor_actual is not None and totales[key] is None:
                             totales[key] = valor_actual
-                        
+                        else:
+                            calculo_exitoso = False
+                            totales = totales_none.copy()
+                            break
+                if not calculo_exitoso:
+                    break
 
             pooles[nombre_pool].update({
                 ConstantesGrafinitum.CLAVES_POOLES_TOTALES[nombre_pool]: totales
@@ -104,7 +111,7 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
         except Exception as e:
             logger.error(f"Error al calcular pooles totales para {nombre_pool}: {e}")
 
-        return dict(pooles)
+        return calculo_exitoso
 
     def construir_informacion(self, db, respuesta_lila, timestamp):
         """Método para construir la información de los pooles (ipv4,ipv6,cgnat) totales, 
@@ -127,15 +134,16 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
                     if pooles.get(pool_name):
 
                         # Calcular los pools totales
-                        self.calcular_pooles_totales(
+                        calculo_exitoso = self.calcular_pooles_totales(
                             pooles,
                             ConstantesGrafinitum.IDENTIFICADOR_POOL[pool_name],
                             pool_name
                         )
-                        
+                        #Se asigna status dependiendo del resultado del calculo total
+                        info_equipo = {nombre_equipo: "OK" if calculo_exitoso else "Incomplete data"}
+                            
                         # Generar el registro
-                        registro = UtilidadesGrafinitum.generar_registro(self,timestamp, nombre_equipo, pooles[pool_name])
-
+                        registro = UtilidadesGrafinitum.generar_registro(self,timestamp, info_equipo, pooles[pool_name])
                         # Guardar el registro en la base de datos
                         db.saveData(registro, pool_name) #Se elimina la llamada a los metodos
 
@@ -147,5 +155,8 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
             failed_hosts = UtilidadesGrafinitum.crear_failed_hosts_hashset(self, failed_hosts)
             UtilidadesGrafinitum.construir_informacion_equipos_fallidos_next_generation(self, failed_hosts, timestamp, db)
         return failed_hosts, not_inventory_present
+
+                                        
+
 
                                         
