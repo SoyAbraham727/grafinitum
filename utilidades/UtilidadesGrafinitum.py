@@ -154,9 +154,11 @@ class UtilidadesGrafinitum:
 
             response = db.consultaAgregacion(pipeline, coleccion)
             
-            logger.info(f"{coleccion} :: response: {response}")
             if response:
+                logger.info(f"{nombre_equipo} :: Se encontro registro no nulo en {coleccion}\nRegistro encontrado: {response}")
                 pooles.append(coleccion)
+            else:
+                logger.info(f"{nombre_equipo} :: No se encontro ningun registro no nulo, no se guardara informacion el la DB")
 
         return pooles
 
@@ -170,16 +172,16 @@ class UtilidadesGrafinitum:
         """
         for info_equipo in failed_hosts:
             for nombre_equipo in info_equipo.keys():        
-                logger.info("inicia :: obtener info equipos fallidos NextGen")        
+                logger.info("inicia :: obtener pooles equipos fallidos NextGen")        
                 pooles = UtilidadesGrafinitum.obtener_pooles_configurados(self, db, nombre_equipo)
-                logger.info("termina :: obtener info equipos fallidos NextGen")        
+                logger.info("termina :: obtener pooles equipos fallidos NextGen")
                 for pool in pooles:
-                    registro = { 
+                    registro = {
                         "timestamp":timestamp, 
                         "device":nombre_equipo, 
                         "data":ConstantesGrafinitum.POOLES_NULOS[pool] 
                     }
-                    logger.warning(f"REGISTRO DB:: {pool} ::: {registro}")
+                    logger.warning(f"EQUIPO FALLIDO: {nombre_equipo}\nREGISTRO DB:: {pool} ::: {registro}")
                     db.saveData(registro, pool)
     
     def construir_informacion_equipos_fallidos_legacy(self, failed_hosts, timestamp, db):
@@ -197,5 +199,5 @@ class UtilidadesGrafinitum:
                     "device":nombre_equipo, 
                     "data":ConstantesGrafinitum.POOLES_NULOS[pool] 
                 }
-                logger.warning(f"REGISTRO DB:: {pool} ::: {registro}")
+                logger.warning(f"EQUIPO FALLIDO: {nombre_equipo}\nREGISTRO DB:: {pool} ::: {registro}")
                 db.saveData(registro, pool) 

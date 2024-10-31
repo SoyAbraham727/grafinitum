@@ -113,7 +113,7 @@ def main_app():
             except Exception as error:
                 logger.error(f"Error en el plugin {key}: {error}")
 
-        logger.info(f"respuesta: {respuesta}")
+        logger.warning(f"[-] EQUIPOS FALLIDOS: {respuesta}")
         fin = time.time()
         logger.info(f"Fin::Tiempo de ejecución de mainApp: {str(fin - inicio)}")
 
