@@ -97,6 +97,13 @@ class UtilidadesGrafinitum:
             logger.error(f"Error al enviar correo: {e}")
 
     def generar_pipeline_consulta_pooles(self, nombre_equipo, clave):
+        """Metodo para generar el pipeline para realizar la consulta a la base de datos.
+        
+        :param nombre_equipo: Nombre del equipo a consultar.
+        :param clave: Clave de los valores totales.
+
+        :returns pipeline: Pipeline para realizar la consulta
+        """
         pipeline = [
             {
                 "$match": {
@@ -116,20 +123,30 @@ class UtilidadesGrafinitum:
         ]
 
         return pipeline
-    
 
-    
+
     def crear_failed_hosts_hashset(self, failed_hosts):
-    
+        """Metodo que realiza un set para obtener la lista de equipos no duplicados.
+        
+        :param failed_host: Lista de diccionarios con los equipos fallidos.
+        :returns equipos_unicos: Lista de equipos no duplicados
+        """
+
         unique_failed_hosts = set()
 
         for host_dict in failed_hosts:
             for host, message in host_dict.items():
                 unique_failed_hosts.add(json.dumps({host: message})) 
-
-        return [json.loads(host) for host in unique_failed_hosts]
+        equipos_unicos = [json.loads(host) for host in unique_failed_hosts]
+        return equipos_unicos
     
     def obtener_pooles_configurados(self, db, nombre_equipo):
+        """Metodo para obtener los pooles configurados en un equipo, de acuerdo a los registros de la base de datos.
+        
+        :param db: Instancia de conexion a la base de datos.
+        :param nombre_equipo: Nombre del equipo que sera consultado.
+        :returns pooles: Lista de pooles configurados en un equipo.
+        """
         pooles = []
         for coleccion in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
             clave = f"data.{ConstantesGrafinitum.CLAVES_POOLES_TOTALES[coleccion]}.TOTALES"
@@ -144,7 +161,13 @@ class UtilidadesGrafinitum:
         return pooles
 
 
-    def construir_informacio_equipos_fallidos_NextGeneration(self, failed_hosts, timestamp, db):
+    def construir_informacion_equipos_fallidos_next_generation(self, failed_hosts, timestamp, db):
+        """Metodo que construye el registro de la base de datos con valores nulos de un equipo Next Generation.
+        
+        :param failed_host: Lista de diccionarios con los equipos fallidos.
+        :param timestamp: Valor numerico que representa la hora y fecha de ejecucion.
+        :param db: Instancia de conexion a la base de datos.
+        """
         for info_equipo in failed_hosts:
             for nombre_equipo in info_equipo.keys():        
                 logger.info("inicia :: obtener info equipos fallidos NextGen")        
@@ -159,11 +182,17 @@ class UtilidadesGrafinitum:
                     logger.warning(f"REGISTRO DB:: {pool} ::: {registro}")
                     db.saveData(registro, pool)
     
-    def construir_informacio_equipos_fallidos_legacy(self, failed_hosts, timestamp, db):
+    def construir_informacion_equipos_fallidos_legacy(self, failed_hosts, timestamp, db):
+        """Metodo que construye el registro de la base de datos con valores nulos de un equipo Legacy.
+        
+        :param failed_host: Lista de diccionarios con los equipos fallidos.
+        :param timestamp: Valor numerico que representa la hora y fecha de ejecucion.
+        :param db: Instancia de conexion a la base de datos.
+        """
         for info_equipo in failed_hosts:
-            for nombre_equipo in info_equipo.keys():                
+            for nombre_equipo in info_equipo.keys():
                 pool = "ipv4"
-                registro = { 
+                registro = {
                     "timestamp":timestamp, 
                     "device":nombre_equipo, 
                     "data":ConstantesGrafinitum.POOLES_NULOS[pool] 

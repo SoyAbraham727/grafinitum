@@ -146,7 +146,7 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
                 UtilidadesGrafinitum.enviar_correo_notificacion(self, error_construir_informcion,titulo)
         if failed_hosts:
             failed_hosts = UtilidadesGrafinitum.crear_failed_hosts_hashset(self, failed_hosts)
-            UtilidadesGrafinitum.construir_informacio_equipos_fallidos_NextGeneration(self, failed_hosts, timestamp, db)
+            UtilidadesGrafinitum.construir_informacion_equipos_fallidos_next_generation(self, failed_hosts, timestamp, db)
         return failed_hosts, not_inventory_present
 
                                         
