@@ -93,8 +93,6 @@ def main_app():
             ConstantesGrafinitum.pluginExecute_JUNIPER_E320
         ]
 
-        logger.info(ConstantesGrafinitum.pluginExecute_CISCO_10000)
-
         mongo_db = mongoConnection(MONGO_POOLES_ASR9K_MX)
         timestamp = int(time.time() * 1000)
         executor = concurrent.futures.ThreadPoolExecutor(max_workers=workers_limit)

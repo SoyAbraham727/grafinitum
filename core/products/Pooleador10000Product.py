@@ -14,6 +14,7 @@ from constantesPlugins import LOG_CONFIG_FILES
 from core.products.PooleadorLegacy import PooleadorLegacy
 from utilidades.UtilidadesGrafinitum import UtilidadesGrafinitum
 from constantes.ConstantesGrafinitum import ConstantesGrafinitum
+from datetime import datetime, timezone
 
 logger = LoggerFileConfig().crearLogFile(LOG_CONFIG_FILES.get("grafinitum"))
 
@@ -60,8 +61,8 @@ class Pooleador10000Product(PooleadorLegacy):
                         break
 
                 # Generar el registro
-                registro = { "timestamp":timestamp, "device":nombre_equipo, "data":pool_ipv4['ipv4']} #Se elimina la llamada a los metodos, se realiza en código
-                
+                registro = UtilidadesGrafinitum.generar_registro(self,timestamp, nombre_equipo, pool_ipv4['ipv4'])
+
                 # Guardar el registro en la base de datos
                 db.saveData(registro, 'ipv4') #Se elimina la llamada a los metodos
 

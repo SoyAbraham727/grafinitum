@@ -13,15 +13,15 @@ sys.path.append("/home/ngsop/lilaApp/plugins/scripts/grafinitum_backend")
 import json
 import html
 import dominate
+
 # Importar módulos personalizados
 from loggingConfig import LoggerFileConfig
 from constantesPlugins import LOG_CONFIG_FILES
 from modelsPlugins import PluginMail
 from utilidadesPlugins import utilidadesPlugins
 from dominate.tags import *
-from datetime import datetime
 from constantes.ConstantesGrafinitum import ConstantesGrafinitum
-
+from datetime import datetime, timezone
 
 
 # Configuración del logger
@@ -81,7 +81,10 @@ class UtilidadesGrafinitum:
         try:
             # Crear el objeto de correo
             pluginMail = PluginMail(
-                to=['jcirilo@uninet.com.mx'],
+                to=['jcirilo@uninet.com.mx', 
+                    'jbarranc@uninet.com.mx', 
+                    'gmoralea@uninet.com.mx'
+                    ],
                 cc=[
                     'jcirilo@uninet.com.mx', 
                     'jbarranc@uninet.com.mx', 
@@ -158,7 +161,7 @@ class UtilidadesGrafinitum:
                 logger.info(f"{nombre_equipo} :: Se encontro registro no nulo en {coleccion}\nRegistro encontrado: {response}")
                 pooles.append(coleccion)
             else:
-                logger.info(f"{nombre_equipo} :: No se encontro ningun registro no nulo, no se guardara informacion el la DB")
+                logger.info(f"{nombre_equipo} :: No se encontro ningun registro no nulo en {coleccion}, no se guardara informacion el la DB")
 
         return pooles
 
@@ -176,11 +179,7 @@ class UtilidadesGrafinitum:
                 pooles = UtilidadesGrafinitum.obtener_pooles_configurados(self, db, nombre_equipo)
                 logger.info("termina :: obtener pooles equipos fallidos NextGen")
                 for pool in pooles:
-                    registro = {
-                        "timestamp":timestamp, 
-                        "device":nombre_equipo, 
-                        "data":ConstantesGrafinitum.POOLES_NULOS[pool] 
-                    }
+                    registro = UtilidadesGrafinitum.generar_registro(self, timestamp, nombre_equipo, ConstantesGrafinitum.POOLES_NULOS[pool])
                     logger.warning(f"EQUIPO FALLIDO: {nombre_equipo}\nREGISTRO DB:: {pool} ::: {registro}")
                     db.saveData(registro, pool)
     
@@ -194,10 +193,16 @@ class UtilidadesGrafinitum:
         for info_equipo in failed_hosts:
             for nombre_equipo in info_equipo.keys():
                 pool = "ipv4"
-                registro = {
+                registro = UtilidadesGrafinitum.generar_registro(self, timestamp, nombre_equipo, ConstantesGrafinitum.POOLES_NULOS[pool])
+                logger.warning(f"EQUIPO FALLIDO: {nombre_equipo}\nREGISTRO DB:: {pool} ::: {registro}")
+                db.saveData(registro, pool)
+
+    def generar_registro(self, timestamp, nombre_equipo,datos_pooleo):
+        registro = {
                     "timestamp":timestamp, 
                     "device":nombre_equipo, 
-                    "data":ConstantesGrafinitum.POOLES_NULOS[pool] 
+                    "data":datos_pooleo,
+                    "timestampDate": datetime.fromtimestamp(timestamp / 1000, tz=timezone.utc)
                 }
-                logger.warning(f"EQUIPO FALLIDO: {nombre_equipo}\nREGISTRO DB:: {pool} ::: {registro}")
-                db.saveData(registro, pool) 
+        return registro
+        

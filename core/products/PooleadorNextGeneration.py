@@ -16,6 +16,7 @@ from constantesPlugins import LOG_CONFIG_FILES
 from core.products.PooleadorProduct import PooleadorProduct
 from utilidades.UtilidadesGrafinitum import UtilidadesGrafinitum
 from constantes.ConstantesGrafinitum import ConstantesGrafinitum
+from datetime import datetime, timezone
 
 from abc import ABC, abstractmethod
 
@@ -133,12 +134,10 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
                         )
                         
                         # Generar el registro
-                        registro = { "timestamp":timestamp, "device":nombre_equipo, "data":pooles[pool_name] } #Se elimina la llamada a los metodos, se realiza en código
-                        
+                        registro = UtilidadesGrafinitum.generar_registro(self,timestamp, nombre_equipo, pooles[pool_name])
+
                         # Guardar el registro en la base de datos
                         db.saveData(registro, pool_name) #Se elimina la llamada a los metodos
-
-                        
 
             except Exception as error_construir_informcion:
                 logger.error(f"Error al construir informacion del equipo {nombre_equipo}: {error_construir_informcion}")
