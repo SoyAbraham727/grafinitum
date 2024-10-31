@@ -138,11 +138,15 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
                         # Guardar el registro en la base de datos
                         db.saveData(registro, pool_name) #Se elimina la llamada a los metodos
 
+                        
+
             except Exception as error_construir_informcion:
                 logger.error(f"Error al construir informacion del equipo {nombre_equipo}: {error_construir_informcion}")
                 titulo = f"GRAFINITUM: error_construir_informacion de equipo: {nombre_equipo}"
                 UtilidadesGrafinitum.enviar_correo_notificacion(self, error_construir_informcion,titulo)
-            
+        if failed_hosts:
+            failed_hosts = UtilidadesGrafinitum.crear_failed_hosts_hashset(self, failed_hosts)
+            UtilidadesGrafinitum.construir_informacio_equipos_fallidos_NextGeneration(self, failed_hosts, timestamp, db)
         return failed_hosts, not_inventory_present
 
                                         

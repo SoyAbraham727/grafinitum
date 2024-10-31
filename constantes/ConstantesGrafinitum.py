@@ -11,7 +11,7 @@ class ConstantesGrafinitum:
     """Clase que define constantes para el manejo de pools en GRAFINITUM."""
 
     WORKERS_LIMIT = 4
-    
+
     # Nombres de los tipos de pools
     LISTA_NOMBRE_POOLES = ["ipv4", "ipv6", "cgnat"]
 
@@ -72,3 +72,28 @@ class ConstantesGrafinitum:
                         coVer='',
                         usuarioExecute='gmoralea',
                         )
+
+    # Pooles nulos para respuesta de default
+    POOLES_NULOS = {
+        "ipv4" : {
+            "IPV4_TOTAL" : {
+                "TOTALES" : None,
+                "LIBRES" : None,
+                "OCUPADOS" : None
+            }
+        },
+        "ipv6" : {
+            "IPV6_TOTAL" : {
+                "TOTALES" : None,
+                "LIBRES" : None,
+                "OCUPADOS" : None
+            }
+        },
+        "cgnat" : {
+            "CGNAT_TOTAL" : {
+                "TOTALES" : None,
+                "LIBRES" : None,
+                "OCUPADOS" : None
+            }
+        }
+    }
