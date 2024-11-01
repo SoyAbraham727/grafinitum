@@ -198,6 +198,13 @@ class UtilidadesGrafinitum:
                 db.saveData(registro, pool)
 
     def generar_registro(self, timestamp, info_equipo, datos_pooleo):
+        """Metodo para generar el registro que será guardado en la base de datos.
+        
+        :param timestamp: Valor numerico que representa la hora y fecha de ejecucion.
+        :param info_equipo: Json con key:nombre_equipo y value: status.
+        :param datos_pooleo: Informacion de pooles que sera guardada en la base de datos.
+        :returns registro: Json con el registro construido.
+        """
         nombre_equipo, status = info_equipo.popitem()
         registro = {
                     "timestamp":timestamp, 
