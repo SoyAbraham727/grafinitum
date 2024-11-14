@@ -44,7 +44,7 @@ def obtener_info_poles_snmp(timestamp, db, plugin_execute):
     logger.info(f"[+] Inicio de ejecucion de plugin: {plugin_execute.nameApp}")
 
     failed_hosts = {}
-    not_inventory_present = {}
+    incomplete_hosts = {}
     respuesta_lila = None
 
 
@@ -57,14 +57,13 @@ def obtener_info_poles_snmp(timestamp, db, plugin_execute):
         if "C000" in respuesta_lila["statusCode"]:
             pooleador = PooleadorProductFactory().crear_pooleador(plugin_execute.namePlugin)
             logger.info(f"Inicia :: construir_informacion :: {plugin_execute.nameApp}")
-            failed_hosts, not_inventory_present = pooleador.construir_informacion(db, respuesta_lila, timestamp)
+            failed_hosts, incomplete_hosts = pooleador.construir_informacion(db, respuesta_lila, timestamp)
             logger.info(f"Termina :: construir_informacion :: {plugin_execute.nameApp}")
 
         else:
             logger.warning(f"Se detectó código de error en: {plugin_execute.nameApp}, {respuesta_lila}")
 
             failed_hosts = respuesta_lila["response"].get("failed_hosts",{})
-            not_inventory_present = respuesta_lila["response"].get("not_inventory_present",{})
         
         logger.info(f"[+] Fin de ejecucion de plugin: {plugin_execute.nameApp}")
     
@@ -72,7 +71,7 @@ def obtener_info_poles_snmp(timestamp, db, plugin_execute):
         logger.error(f"[+] Error en programa obtener_info_poles_snmp {error_obtener_info_poles_snmp}\n"
                      f"Plugin ejecutado: {plugin_execute.namePlugin}")
 
-    return failed_hosts, not_inventory_present
+    return failed_hosts, incomplete_hosts
 
 
 def main_app():
@@ -80,6 +79,7 @@ def main_app():
 
     logger.info("Inicio::mainApp")
     respuesta = {'ASR9K': {}, 'MX': {}, 'CISCO_10000': {}, 'JUNIPER_E': {}}
+    incomplete_hosts = {'ASR9K': {}, 'MX': {}, 'CISCO_10000': {}, 'JUNIPER_E': {}}
     workers_limit = ConstantesGrafinitum.WORKERS_LIMIT
 
     try:
@@ -107,11 +107,12 @@ def main_app():
         for future in concurrent.futures.as_completed(futures):
             key = futures[future]  # Obtiene la clave correspondiente
             try:
-                respuesta[key] = future.result()
+                respuesta[key],incomplete_hosts[key] = future.result()
             except Exception as error:
                 logger.error(f"Error en el plugin {key}: {error}")
 
         logger.warning(f"[-] EQUIPOS FALLIDOS: {respuesta}")
+        logger.warning(f"[-] EQUIPOS CON DATA INCOMPLETA: {incomplete_hosts}")
         fin = time.time()
         logger.info(f"Fin::Tiempo de ejecución de mainApp: {str(fin - inicio)}")
 

@@ -143,7 +143,7 @@ class UtilidadesGrafinitum:
         equipos_unicos = [json.loads(host) for host in unique_failed_hosts]
         return equipos_unicos
     
-    def obtener_pooles_configurados(self, db, nombre_equipo):
+    def obtener_pooles_configurados(self, db, nombre_equipo, lista_nombre_pooles):
         """Metodo para obtener los pooles configurados en un equipo, de acuerdo a los registros de la base de datos.
         
         :param db: Instancia de conexion a la base de datos.
@@ -151,7 +151,7 @@ class UtilidadesGrafinitum:
         :returns pooles: Lista de pooles configurados en un equipo.
         """
         pooles = []
-        for coleccion in ConstantesGrafinitum.LISTA_NOMBRE_POOLES:
+        for coleccion in lista_nombre_pooles:
             clave = f"data.{ConstantesGrafinitum.CLAVES_POOLES_TOTALES[coleccion]}.TOTALES"
             pipeline = UtilidadesGrafinitum.generar_pipeline_consulta_pooles(self, nombre_equipo,clave)
 
@@ -176,7 +176,7 @@ class UtilidadesGrafinitum:
         for info_equipo in failed_hosts:
             for nombre_equipo in info_equipo.keys():        
                 logger.info("inicia :: obtener pooles equipos fallidos NextGen")        
-                pooles = UtilidadesGrafinitum.obtener_pooles_configurados(self, db, nombre_equipo)
+                pooles = UtilidadesGrafinitum.obtener_pooles_configurados(self, db, nombre_equipo, ConstantesGrafinitum.LISTA_NOMBRE_POOLES)
                 logger.info("termina :: obtener pooles equipos fallidos NextGen")
                 for pool in pooles:
                     registro = UtilidadesGrafinitum.generar_registro(self, timestamp, info_equipo.copy(), ConstantesGrafinitum.POOLES_NULOS[pool])

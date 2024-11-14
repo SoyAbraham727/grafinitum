@@ -35,10 +35,10 @@ class Pooleador10000Product(PooleadorLegacy):
         pool_ipv4 = pool_ipv4_inicial.copy()
         
         # Se obtienen los equipos no encontrados en inventario y los fallidos.
-        not_inventory_present = \
-            respuesta_lila["response"].pop("notInventoryPresent")
+        #not_inventory_present = respuesta_lila["response"].pop("notInventoryPresent")
+        respuesta_lila["response"].pop("notInventoryPresent")
         failed_hosts = respuesta_lila["response"].pop("failed_hosts")
-
+        incomplete_hosts = {}
         
 
         for nombre_equipo, info_equipo in respuesta_lila["response"].items():
@@ -61,7 +61,8 @@ class Pooleador10000Product(PooleadorLegacy):
 
                     else:
                         pool_ipv4 = pool_ipv4_none.copy()
-                        registro_equipo = {nombre_equipo:"Inclomplete data"}
+                        registro_equipo = {nombre_equipo:"Incomplete data"}
+                        incomplete_hosts.update(registro_equipo)
                         break
 
                 logger.warning(f"info Equipo:::{registro_equipo}")
@@ -82,4 +83,4 @@ class Pooleador10000Product(PooleadorLegacy):
             failed_hosts = UtilidadesGrafinitum.crear_failed_hosts_hashset(self, failed_hosts)
             UtilidadesGrafinitum.construir_informacion_equipos_fallidos_legacy(self, failed_hosts, timestamp, db)
 
-        return failed_hosts, not_inventory_present
+        return failed_hosts, incomplete_hosts

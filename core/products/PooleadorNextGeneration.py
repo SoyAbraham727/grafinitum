@@ -124,8 +124,10 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
         y not_inventory_present a los equipos que no se encontraron en el inventario"""
 
         # Se obtienen los equipos no encontrados en inventario y los fallidos.
-        not_inventory_present = respuesta_lila["response"].pop("notInventoryPresent",[])
+        #not_inventory_present = respuesta_lila["response"].pop("notInventoryPresent",[])
+        respuesta_lila["response"].pop("notInventoryPresent",[])
         failed_hosts = respuesta_lila["response"].pop("failed_hosts",[])
+        incomplete_hosts = {}
 
         for nombre_equipo, info_equipo in respuesta_lila["response"].items(): #Se corrige
             try:
@@ -141,20 +143,39 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
                         )
                         #Se asigna status dependiendo del resultado del calculo total
                         info_equipo = {nombre_equipo: "OK" if calculo_exitoso else "Incomplete data"}
+                        if info_equipo.get(nombre_equipo) == "Incomplete data":
+                            incomplete_hosts.update(info_equipo)
+
                             
                         # Generar el registro
                         registro = UtilidadesGrafinitum.generar_registro(self,timestamp, info_equipo, pooles[pool_name])
                         # Guardar el registro en la base de datos
                         db.saveData(registro, pool_name) #Se elimina la llamada a los metodos
+                    else:
 
-            except Exception as error_construir_informcion:
-                logger.error(f"Error al construir informacion del equipo {nombre_equipo}: {error_construir_informcion}")
+                        #se verifica si existe el historico del pool
+                        pool_configurado = UtilidadesGrafinitum.obtener_pooles_configurados(self, db, nombre_equipo, [pool_name])
+                        
+                        if pool_configurado:
+                            logger.error(f"pool configurado {pool_configurado}")
+                            #Se crea status de pooleo no configurado
+                            info_equipo = {nombre_equipo: "No configurado"}
+                            # Generar el registro
+                            registro = UtilidadesGrafinitum.generar_registro(self,timestamp, info_equipo, ConstantesGrafinitum.POOLES_NULOS[pool_name])
+
+                            logger.error(f"No configurado:: {pool_name}, REGISTRO:: {registro}")
+                            # Guardar el registro en la base de datos
+                            db.saveData(registro, pool_name)
+
+            except Exception as error_construir_informacion:
+                logger.error(f"Error al construir informacion del equipo {nombre_equipo}: {error_construir_informacion}")
                 titulo = f"GRAFINITUM: error_construir_informacion de equipo: {nombre_equipo}"
-                UtilidadesGrafinitum.enviar_correo_notificacion(self, error_construir_informcion,titulo)
+                UtilidadesGrafinitum.enviar_correo_notificacion(self, error_construir_informacion,titulo)
         if failed_hosts:
             failed_hosts = UtilidadesGrafinitum.crear_failed_hosts_hashset(self, failed_hosts)
             UtilidadesGrafinitum.construir_informacion_equipos_fallidos_next_generation(self, failed_hosts, timestamp, db)
-        return failed_hosts, not_inventory_present
+
+        return failed_hosts, incomplete_hosts
 
                                         
 
