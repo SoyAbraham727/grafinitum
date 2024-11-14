@@ -158,10 +158,9 @@ class UtilidadesGrafinitum:
             response = db.consultaAgregacion(pipeline, coleccion)
             
             if response:
-                logger.info(f"{nombre_equipo} :: Se encontro registro no nulo en {coleccion}\nRegistro encontrado: {response}")
+                logger.warning(f"{nombre_equipo} :: Equipo con registro valido en {coleccion}, Se guardara un registro nulo en la base de datos\nRegistro encontrado: {response}")
                 pooles.append(coleccion)
-            else:
-                logger.info(f"{nombre_equipo} :: No se encontro ningun registro no nulo en {coleccion}, no se guardara informacion el la DB")
+            
 
         return pooles
 

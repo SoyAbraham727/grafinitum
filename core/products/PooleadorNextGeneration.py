@@ -157,13 +157,14 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
                         pool_configurado = UtilidadesGrafinitum.obtener_pooles_configurados(self, db, nombre_equipo, [pool_name])
                         
                         if pool_configurado:
-                            logger.error(f"pool configurado {pool_configurado}")
+                            logger.warning(f"El pool {pool_configurado} parece no estar configurado en el equipo {nombre_equipo},\n"
+                                           "sin embargo tiene antecedentes de configuración. Se guardara registro nulo.")
                             #Se crea status de pooleo no configurado
                             info_equipo = {nombre_equipo: "No configurado"}
                             # Generar el registro
                             registro = UtilidadesGrafinitum.generar_registro(self,timestamp, info_equipo, ConstantesGrafinitum.POOLES_NULOS[pool_name])
 
-                            logger.error(f"No configurado:: {pool_name}, REGISTRO:: {registro}")
+                            logger.warning(f"{nombre_equipo} :: No configurado:: {pool_name}, REGISTRO DB:: {registro}")
                             # Guardar el registro en la base de datos
                             db.saveData(registro, pool_name)
 

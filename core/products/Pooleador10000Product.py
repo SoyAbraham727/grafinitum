@@ -62,10 +62,11 @@ class Pooleador10000Product(PooleadorLegacy):
                     else:
                         pool_ipv4 = pool_ipv4_none.copy()
                         registro_equipo = {nombre_equipo:"Incomplete data"}
+                        logger.warning(f"El Equipo {nombre_equipo} contiene data incompleta, se guardara un registro nulo.")
                         incomplete_hosts.update(registro_equipo)
                         break
 
-                logger.warning(f"info Equipo:::{registro_equipo}")
+                
                 # Generar el registro
                 registro = UtilidadesGrafinitum.generar_registro(self,timestamp, registro_equipo, pool_ipv4['ipv4'])
 

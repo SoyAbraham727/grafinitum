@@ -56,6 +56,7 @@ class PooleadorE320Product(PooleadorLegacy):
                         else:
                             pool_ipv4 = pool_ipv4_none.copy()
                             registro_equipo = {nombre_equipo:"Incomplete data"}
+                            logger.warning(f"El Equipo {nombre_equipo} contiene data incompleta, se guardara un registro nulo.")
                             incomplete_hosts.update(registro_equipo)
                             break
 
@@ -64,6 +65,7 @@ class PooleadorE320Product(PooleadorLegacy):
                     else:
                         pool_ipv4 = pool_ipv4_none.copy()
                         registro_equipo = {nombre_equipo:"Incomplete data"}
+                        logger.warning(f"El Equipo {nombre_equipo} contiene data incompleta, se guardara un registro nulo.")
                         incomplete_hosts.update(registro_equipo)
                         break
 
