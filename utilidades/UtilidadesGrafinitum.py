@@ -99,7 +99,7 @@ class UtilidadesGrafinitum:
         except Exception as e:
             logger.error(f"Error al enviar correo: {e}")
 
-    def generar_pipeline_consulta_pooles(self, nombre_equipo, clave):
+    def generar_pipeline_consulta_pooles(self, nombre_equipo):
         """Metodo para generar el pipeline para realizar la consulta a la base de datos.
         
         :param nombre_equipo: Nombre del equipo a consultar.
@@ -111,12 +111,13 @@ class UtilidadesGrafinitum:
             {
                 "$match": {
                     "device": nombre_equipo,
-                    clave: {"$ne": None}
+                    "status": "OK"
                 }
             },
             {
                 "$project": {
-                    clave: 1,
+                    "device": 1,
+                    "status": 1,
                     "_id": 0
                 }
             },
@@ -152,8 +153,7 @@ class UtilidadesGrafinitum:
         """
         pooles = []
         for coleccion in lista_nombre_pooles:
-            clave = f"data.{ConstantesGrafinitum.CLAVES_POOLES_TOTALES[coleccion]}.TOTALES"
-            pipeline = UtilidadesGrafinitum.generar_pipeline_consulta_pooles(self, nombre_equipo,clave)
+            pipeline = UtilidadesGrafinitum.generar_pipeline_consulta_pooles(self, nombre_equipo)
 
             response = db.consultaAgregacion(pipeline, coleccion)
             

@@ -144,6 +144,7 @@ class PooleadorNextGeneration(PooleadorProduct, ABC):
                         #Se asigna status dependiendo del resultado del calculo total
                         info_equipo = {nombre_equipo: "OK" if calculo_exitoso else "Incomplete data"}
                         if info_equipo.get(nombre_equipo) == "Incomplete data":
+                            logger.warning(f"El Equipo {nombre_equipo} contiene data incompleta, se guardara un registro nulo.")
                             incomplete_hosts.update(info_equipo)
 
                             
