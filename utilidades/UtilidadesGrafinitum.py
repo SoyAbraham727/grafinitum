@@ -174,7 +174,7 @@ class UtilidadesGrafinitum:
         """
         for info_equipo in failed_hosts:
             for nombre_equipo in info_equipo.keys():        
-                logger.info("inicia :: obtener pooles equipos fallidos NextGen")        
+                logger.info("inicia :: obtener pooles equipos fallidos NextGen")
                 pooles = UtilidadesGrafinitum.obtener_pooles_configurados(self, db, nombre_equipo, ConstantesGrafinitum.LISTA_NOMBRE_POOLES)
                 logger.info("termina :: obtener pooles equipos fallidos NextGen")
                 for pool in pooles:
@@ -192,9 +192,14 @@ class UtilidadesGrafinitum:
         for info_equipo in failed_hosts:
             for nombre_equipo in info_equipo.keys():
                 pool = "ipv4"
-                registro = UtilidadesGrafinitum.generar_registro(self, timestamp, info_equipo.copy(), ConstantesGrafinitum.POOLES_NULOS[pool])
-                logger.warning(f"EQUIPO FALLIDO: {nombre_equipo}\nREGISTRO DB:: {pool} ::: {registro}")
-                db.saveData(registro, pool)
+                #Se agrega validación de existencia de pool ipv4.
+                logger.info("inicia :: obtener pooles equipos fallidos Legacy")        
+                pooles = UtilidadesGrafinitum.obtener_pooles_configurados(self, db, nombre_equipo, ConstantesGrafinitum.LISTA_NOMBRE_POOLES)
+                logger.info("termina :: obtener pooles equipos fallidos Legacy")
+                if pooles:
+                    registro = UtilidadesGrafinitum.generar_registro(self, timestamp, info_equipo.copy(), ConstantesGrafinitum.POOLES_NULOS[pool])
+                    logger.warning(f"EQUIPO FALLIDO: {nombre_equipo}\nREGISTRO DB:: {pool} ::: {registro}")
+                    db.saveData(registro, pool)
 
     def generar_registro(self, timestamp, info_equipo, datos_pooleo):
         """Metodo para generar el registro que será guardado en la base de datos.

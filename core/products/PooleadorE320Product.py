@@ -83,8 +83,8 @@ class PooleadorE320Product(PooleadorLegacy):
                 titulo = f"GRAFINITUM: error_construir_informacion de equipo: {nombre_equipo}"
                 UtilidadesGrafinitum.enviar_correo_notificacion(self, error_construir_informcion,titulo)
         
-        if failed_hosts:
-            failed_hosts = UtilidadesGrafinitum.crear_failed_hosts_hashset(self, failed_hosts)
+        if failed_hosts:            
+            failed_hosts = UtilidadesGrafinitum.crear_failed_hosts_hashset(self, failed_hosts)            
             UtilidadesGrafinitum.construir_informacion_equipos_fallidos_legacy(self, failed_hosts, timestamp, db)
 
         return failed_hosts, incomplete_hosts
