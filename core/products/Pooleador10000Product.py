@@ -9,6 +9,7 @@ import sys
 sys.path.append("/home/ngsop/lilaApp/plugins/utilidadesPlugins")
 sys.path.append("/home/ngsop/lilaApp/core")
 sys.path.append("/home/ngsop/lilaApp/plugins/scripts/grafinitum_backend")
+import copy
 from utilidades.loggingConfig import LoggerFileConfig
 from constantesPlugins import LOG_CONFIG_FILES
 from core.products.PooleadorLegacy import PooleadorLegacy
@@ -32,7 +33,7 @@ class Pooleador10000Product(PooleadorLegacy):
 
         pool_ipv4_inicial = {'ipv4': {'IPV4_TOTAL':{'TOTALES': 0,'OCUPADOS': 0, 'LIBRES': 0}}}
         pool_ipv4_none = {'ipv4': {'IPV4_TOTAL':{'TOTALES': None,'OCUPADOS': None, 'LIBRES': None}}}
-        pool_ipv4 = pool_ipv4_inicial.copy()
+        pool_ipv4 = copy.deepcopy(pool_ipv4_inicial)
         
         # Se obtienen los equipos no encontrados en inventario y los fallidos.
         #not_inventory_present = respuesta_lila["response"].pop("notInventoryPresent")
@@ -42,6 +43,7 @@ class Pooleador10000Product(PooleadorLegacy):
         
 
         for nombre_equipo, info_equipo in respuesta_lila["response"].items():
+            pool_ipv4 = copy.deepcopy(pool_ipv4_inicial)
             registro_equipo = {nombre_equipo:"OK"}
             try:
                 for id_comando, info_comando in info_equipo.items():
@@ -54,13 +56,14 @@ class Pooleador10000Product(PooleadorLegacy):
                                 
                         if id_comando == '101':
                             pool_ipv4['ipv4']['IPV4_TOTAL']['LIBRES'] = suma_pooles_ipv4
+
                         elif id_comando == '102':
                             pool_ipv4['ipv4']['IPV4_TOTAL']['OCUPADOS'] = suma_pooles_ipv4
 
                         pool_ipv4['ipv4']['IPV4_TOTAL']['TOTALES'] += suma_pooles_ipv4
 
                     else:
-                        pool_ipv4 = pool_ipv4_none.copy()
+                        pool_ipv4 = copy.deepcopy(pool_ipv4_none)
                         registro_equipo = {nombre_equipo:"Incomplete data"}
                         logger.warning(f"El Equipo {nombre_equipo} contiene data incompleta, se guardara un registro nulo.")
                         incomplete_hosts.update(registro_equipo)
@@ -73,7 +76,8 @@ class Pooleador10000Product(PooleadorLegacy):
                 # Guardar el registro en la base de datos
                 db.saveData(registro, 'ipv4') #Se elimina la llamada a los metodos
 
-                pool_ipv4 = pool_ipv4_inicial.copy()
+                #pool_ipv4 = pool_ipv4_inicial.copy()
+                #logger.info(f'POOL_Inicializado:{pool_ipv4}')
 
 
             except Exception as error_construir_informcion:
@@ -85,3 +89,4 @@ class Pooleador10000Product(PooleadorLegacy):
             UtilidadesGrafinitum.construir_informacion_equipos_fallidos_legacy(self, failed_hosts, timestamp, db)
 
         return failed_hosts, incomplete_hosts
+

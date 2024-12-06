@@ -30,7 +30,7 @@ class ConstantesGrafinitum:
     }
 
     #Identificador de pool NO_INTERNET
-    NO_INTERNET = "78.79.95.73.78.84.69.82.78.69.84.1.4.169.254.0.0"
+    NO_INTERNET = "78.79.95.73.78.84.69.82.78.69.84.1.4.169.254.0.0"  
 
     #Plugins
     pluginExecute_ASR9K = PluginExecute(
