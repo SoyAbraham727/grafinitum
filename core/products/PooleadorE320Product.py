@@ -9,6 +9,7 @@ import sys
 sys.path.append("/home/ngsop/lilaApp/plugins/utilidadesPlugins")
 sys.path.append("/home/ngsop/lilaApp/core")
 sys.path.append("/home/ngsop/lilaApp/plugins/scripts/grafinitum_backend")
+import copy
 from loggingConfig import LoggerFileConfig
 from constantesPlugins import LOG_CONFIG_FILES
 from core.products.PooleadorLegacy import PooleadorLegacy
@@ -30,8 +31,8 @@ class PooleadorE320Product(PooleadorLegacy):
         y not_inventory_present a los equipos que no se encontraron en el inventario"""
 
         pool_ipv4_inicial = {'ipv4': {'IPV4_TOTAL':{'TOTALES': 0,'OCUPADOS': 0, 'LIBRES': 0}}}
-        pool_ipv4_none = {'ipv4': {'IPV4_TOTAL':{'TOTALES': None,'OCUPADOS': None, 'LIBRES': None}}}
-        pool_ipv4 = pool_ipv4_inicial.copy()
+        pool_ipv4_none = {'ipv4': {'IPV4_TOTAL':{'TOTALES': None,'OCUPADOS': None, 'LIBRES': None}}}        
+        pool_ipv4 = copy.deepcopy(pool_ipv4_inicial)
         
         # Se obtienen los equipos no encontrados en inventario y los fallidos.
         #not_inventory_present = respuesta_lila["response"].pop("notInventoryPresent")
@@ -40,6 +41,7 @@ class PooleadorE320Product(PooleadorLegacy):
         incomplete_hosts = {}
 
         for nombre_equipo, info_equipo in respuesta_lila["response"].items():
+            pool_ipv4 = copy.deepcopy(pool_ipv4_inicial) #Se inicializa nuevamente pool_ipv4
             registro_equipo = {nombre_equipo:"OK"}
             try:
                 for id_comando, info_comando in info_equipo.items():
@@ -54,7 +56,7 @@ class PooleadorE320Product(PooleadorLegacy):
                         elif id_comando == '102' and total_pool_ipv4 is not None:
                             pool_ipv4['ipv4']['IPV4_TOTAL']['OCUPADOS'] = total_pool_ipv4
                         else:
-                            pool_ipv4 = pool_ipv4_none.copy()
+                            pool_ipv4 = copy.deepcopy(pool_ipv4_none)
                             registro_equipo = {nombre_equipo:"Incomplete data"}
                             logger.warning(f"El Equipo {nombre_equipo} contiene data incompleta, se guardara un registro nulo.")
                             incomplete_hosts.update(registro_equipo)
@@ -63,7 +65,7 @@ class PooleadorE320Product(PooleadorLegacy):
                         pool_ipv4['ipv4']['IPV4_TOTAL']['LIBRES'] = pool_ipv4['ipv4']['IPV4_TOTAL']['TOTALES'] - pool_ipv4['ipv4']['IPV4_TOTAL']['OCUPADOS']
 
                     else:
-                        pool_ipv4 = pool_ipv4_none.copy()
+                        pool_ipv4 = copy.deepcopy(pool_ipv4_none)
                         registro_equipo = {nombre_equipo:"Incomplete data"}
                         logger.warning(f"El Equipo {nombre_equipo} contiene data incompleta, se guardara un registro nulo.")
                         incomplete_hosts.update(registro_equipo)
@@ -75,7 +77,7 @@ class PooleadorE320Product(PooleadorLegacy):
                 # Guardar el registro en la base de datos
                 db.saveData(registro, 'ipv4') #Se elimina la llamada a los metodos
 
-                pool_ipv4 = pool_ipv4_inicial.copy() #Se inicializa nuevamente pool_ipv4
+                
 
 
             except Exception as error_construir_informcion:
